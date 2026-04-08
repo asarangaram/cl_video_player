@@ -18,6 +18,10 @@ dependencies:
   media_kit_libs_video: ^1.0.7
   # For HtmlVideoPlayer and OverlayVideoPlayer (web only)
   web: ^1.1.0
+  # For gallery video player visibility tracking
+  visibility_detector: ^0.4.0+2
+  # UI components
+  shadcn_ui: ^0.46.1
 
 dev_dependencies:
   flutter_test:

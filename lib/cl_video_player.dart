@@ -1,16 +1,32 @@
-/// Video player implementations for experimentation and testing.
+/// Video player implementations and gallery widgets.
 ///
-/// This package provides 4 independent video player implementations:
+/// Players:
 /// - [NativeVideoPlayer] - Flutter's official video_player package
 /// - [MediaKitVideoPlayer] - media_kit for texture-based rendering
 /// - [HtmlVideoPlayer] - HTML5 video element (web only)
 /// - [OverlayVideoPlayer] - Overlay video outside Flutter (web only)
 ///
-/// All players implement [VideoPlayerInterface] for easy swapping.
+/// Gallery:
+/// - [GalleryDesktop] - Desktop gallery with nav buttons and auto-scroll
+/// - [GalleryMobile] - Mobile gallery with PageView and thumbnail strip
+/// - [GalleryVideoPlayer] - Video player with poster preview
+/// - [GalleryItem] - Gallery item model
 library cl_video_player;
 
+// Players
 export 'src/video_player_interface.dart';
 export 'src/video_player_native.dart';
 export 'src/video_player_media_kit.dart';
 export 'src/video_player_html.dart';
 export 'src/video_player_overlay.dart';
+
+// Gallery
+export 'src/gallery_item.dart';
+export 'src/gallery_video_player.dart';
+export 'src/gallery_navigation_button.dart';
+export 'src/gallery_thumbnail_strip.dart';
+export 'src/gallery_desktop.dart';
+export 'src/gallery_mobile.dart';
+
+// Utils
+export 'src/video_url_utils.dart';
