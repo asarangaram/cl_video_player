@@ -30,3 +30,12 @@ export 'src/gallery_mobile.dart';
 
 // Utils
 export 'src/video_url_utils.dart';
+
+// Providers
+export 'src/providers/media_control.dart';
+
+// Highlight widgets
+export 'src/widgets/highlight_media.dart';
+export 'src/widgets/highlight_image.dart';
+export 'src/widgets/audio_controller_audio_mute.dart';
+export 'src/widgets/pop_over_video_player.dart';
