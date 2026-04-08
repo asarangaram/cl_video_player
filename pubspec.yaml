@@ -1,0 +1,25 @@
+name: cl_video_player
+description: Video player implementations for experimentation and testing. Provides 4 independent player types.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # For NativeVideoPlayer
+  video_player: ^2.9.3
+  # For MediaKitVideoPlayer
+  media_kit: ^1.2.6
+  media_kit_video: ^2.0.1
+  media_kit_libs_video: ^1.0.7
+  # For HtmlVideoPlayer and OverlayVideoPlayer (web only)
+  web: ^1.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
