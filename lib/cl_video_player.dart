@@ -17,8 +17,11 @@ library cl_video_player;
 export 'src/video_player_interface.dart';
 export 'src/video_player_native.dart';
 export 'src/video_player_media_kit.dart';
-export 'src/video_player_html.dart';
-export 'src/video_player_overlay.dart';
+// Web-only players — guarded with conditional exports
+export 'src/video_player_html_stub.dart'
+    if (dart.library.js_interop) 'src/video_player_html.dart';
+export 'src/video_player_overlay_stub.dart'
+    if (dart.library.js_interop) 'src/video_player_overlay.dart';
 
 // Gallery
 export 'src/gallery_item.dart';
