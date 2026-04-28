@@ -5,6 +5,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 
 import 'gallery_item.dart';
 import 'gallery_navigation_button.dart';
+import 'full_screen_image.dart';
 import 'gallery_video_player.dart';
 
 class GalleryDesktop extends StatefulWidget {
@@ -179,23 +180,29 @@ class GalleryDesktopState extends State<GalleryDesktop> {
     final isNetworkImage =
         imageUrl.startsWith('http://') || imageUrl.startsWith('https://');
 
+    final Widget image;
     if (isNetworkImage) {
-      return Image.network(
+      image = Image.network(
         imageUrl,
-        fit: BoxFit.cover,
+        fit: BoxFit.contain,
         width: double.infinity,
         height: double.infinity,
         loadingBuilder: buildLoadingIndicator,
         errorBuilder: buildErrorWidget,
       );
+    } else {
+      image = Image.asset(
+        imageUrl,
+        fit: BoxFit.contain,
+        width: double.infinity,
+        height: double.infinity,
+        errorBuilder: buildErrorWidget,
+      );
     }
 
-    return Image.asset(
-      imageUrl,
-      fit: BoxFit.cover,
-      width: double.infinity,
-      height: double.infinity,
-      errorBuilder: buildErrorWidget,
+    return GestureDetector(
+      onTap: () => showFullScreenImage(context, imageUrl),
+      child: image,
     );
   }
 
