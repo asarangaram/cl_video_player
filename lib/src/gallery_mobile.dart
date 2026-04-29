@@ -6,6 +6,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 import 'gallery_item.dart';
 import 'gallery_thumbnail_strip.dart';
 import 'full_screen_image.dart';
+import 'gallery_pdf_card.dart';
 import 'gallery_video_player.dart';
 
 class GalleryMobile extends StatefulWidget {
@@ -13,6 +14,7 @@ class GalleryMobile extends StatefulWidget {
     super.key,
     required this.items,
     required this.playerFactory,
+    this.onPdfDownload,
     this.height = 250.0,
     this.imageSpacing = 16.0,
     this.viewportFraction = 0.70,
@@ -23,6 +25,10 @@ class GalleryMobile extends StatefulWidget {
 
   final List<GalleryItem> items;
   final VideoPlayerFactory playerFactory;
+
+  /// Called when a PDF item's download button is tapped. Receives the PDF URL.
+  final ValueChanged<String>? onPdfDownload;
+
   final double height;
   final double imageSpacing;
   final double viewportFraction;
@@ -100,7 +106,12 @@ class GalleryMobileState extends State<GalleryMobile> {
     final isCenter = index == currentPage;
 
     final Widget content;
-    if (item.isVideo) {
+    if (item.isPdf) {
+      content = GalleryPdfCard(
+        pdfUrl: item.url,
+        onDownload: () => widget.onPdfDownload?.call(item.url),
+      );
+    } else if (item.isVideo) {
       content = GalleryVideoPlayer(
         videoUrl: item.url,
         videoId: item.id,
