@@ -34,7 +34,9 @@ class MediaKitVideoPlayer implements VideoPlayerInterface {
     DurationCallback? onDurationChanged,
     ErrorCallback? onError,
   }) async {
-    _player = Player();
+    _player = Player(
+      configuration: const PlayerConfiguration(logLevel: MPVLogLevel.error),
+    );
     _controller = VideoController(_player!);
 
     _subscriptions.add(_player!.stream.playing.listen((playing) {
