@@ -25,6 +25,7 @@ export 'src/video_player_overlay_stub.dart'
 
 // Gallery
 export 'src/gallery_item.dart';
+export 'src/gallery_pdf_card.dart';
 export 'src/gallery_video_player.dart';
 export 'src/gallery_navigation_button.dart';
 export 'src/gallery_thumbnail_strip.dart';

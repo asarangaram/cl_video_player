@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-enum GalleryItemType { image, video }
+enum GalleryItemType { image, video, pdf }
 
 @immutable
 class GalleryItem {
@@ -30,8 +30,17 @@ class GalleryItem {
     );
   }
 
+  factory GalleryItem.pdf(String url, {String? id}) {
+    return GalleryItem(
+      id: id ?? url,
+      url: url,
+      type: GalleryItemType.pdf,
+    );
+  }
+
   bool get isImage => type == GalleryItemType.image;
   bool get isVideo => type == GalleryItemType.video;
+  bool get isPdf => type == GalleryItemType.pdf;
 
   GalleryItem copyWith({
     String? id,

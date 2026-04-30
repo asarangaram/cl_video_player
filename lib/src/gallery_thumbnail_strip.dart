@@ -39,8 +39,14 @@ class GalleryThumbnailStrip extends StatelessWidget {
   Widget buildThumbnail(int index) {
     final item = items[index];
     final isSelected = index == selectedIndex;
-    final imageUrl =
-        item.isVideo ? VideoUrlUtils.getPosterUrl(item.url) : item.url;
+    final String imageUrl;
+    if (item.isVideo) {
+      imageUrl = VideoUrlUtils.getPosterUrl(item.url);
+    } else if (item.isPdf) {
+      imageUrl = VideoUrlUtils.getPdfPreviewUrl(item.url);
+    } else {
+      imageUrl = item.url;
+    }
 
     return GestureDetector(
       onTap: () => onThumbnailTap(index),
@@ -75,7 +81,7 @@ class GalleryThumbnailStrip extends StatelessWidget {
                     );
                   },
                 ),
-                if (item.isVideo)
+                if (item.isVideo || item.isPdf)
                   Center(
                     child: Container(
                       width: thumbnailHeight * 0.45,
@@ -85,7 +91,7 @@ class GalleryThumbnailStrip extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        Icons.play_arrow,
+                        item.isPdf ? Icons.picture_as_pdf : Icons.play_arrow,
                         color: Colors.white,
                         size: thumbnailHeight * 0.3,
                       ),

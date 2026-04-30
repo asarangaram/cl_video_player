@@ -66,4 +66,25 @@ class VideoUrlUtils {
     final lowerUrl = _stripQuery(url).toLowerCase();
     return lowerUrl.endsWith('.webp') && !lowerUrl.endsWith('_poster.webp');
   }
+
+  /// Check if URL points to a PDF file.
+  static bool isPdfUrl(String url) {
+    final lowerUrl = _stripQuery(url).toLowerCase();
+    return lowerUrl.endsWith('.pdf');
+  }
+
+  /// Get the preview image URL from a PDF URL.
+  ///
+  /// Example: `document.pdf` -> `document_poster.png`
+  /// Example: `document.pdf?v=123` -> `document_poster.png`
+  static String getPdfPreviewUrl(String pdfUrl) {
+    final urlWithoutQuery = _stripQuery(pdfUrl);
+    final lowerUrl = urlWithoutQuery.toLowerCase();
+
+    if (lowerUrl.endsWith('.pdf')) {
+      return '${urlWithoutQuery.substring(0, urlWithoutQuery.length - 4)}_poster.png';
+    }
+
+    return '${urlWithoutQuery}_poster.png';
+  }
 }
