@@ -96,6 +96,8 @@ class HighlightMediaState extends ConsumerState<HighlightMedia> {
 
       await player!.setLooping(true);
 
+      if (!mounted) return;
+
       // Apply current media control state
       final control = ref.read(mediaControlProvider);
       await player!.setVolume(control.isMuted ? 0.0 : 1.0);
