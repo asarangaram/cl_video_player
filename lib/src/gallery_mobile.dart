@@ -233,6 +233,7 @@ class GalleryMobileState extends State<GalleryMobile> {
 
   void performAutoScroll() {
     if (activeVideoId != null) return;
+    if (!pageController.hasClients) return;
 
     final nextPage = currentPage + 1;
     if (nextPage < widget.items.length) {
