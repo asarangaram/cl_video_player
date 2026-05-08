@@ -1,12 +1,32 @@
 import 'package:cl_video_player/cl_video_player.dart';
 import 'package:flutter/material.dart';
 
-/// Demo screen exercising [MediaUploader] with a fake (in-memory)
-/// upload + status backend. No SDK / network involved.
+void main() {
+  runApp(const UploadExampleApp());
+}
+
+class UploadExampleApp extends StatelessWidget {
+  const UploadExampleApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'MediaUploader demo',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+        useMaterial3: true,
+      ),
+      home: const UploaderDemoScreen(),
+    );
+  }
+}
+
+/// Exercises [MediaUploader] with a fake (in-memory) upload + status
+/// backend. No SDK / network involved.
 ///
-/// Image uploads complete synchronously. Video uploads return a
-/// `processing` status and the fake polls converge to `completed`
-/// after 2 ticks (or `failed` for files matching `failVideo*`).
+/// Image and pdf uploads complete synchronously. Video uploads return
+/// `processing` and the fake polls converge to `completed` after 2
+/// ticks. Filenames starting with `fail` always fail.
 class UploaderDemoScreen extends StatefulWidget {
   const UploaderDemoScreen({super.key});
 
@@ -93,16 +113,13 @@ class UploaderDemoScreenState extends State<UploaderDemoScreen> {
   }
 }
 
-/// In-memory fake. Images complete immediately; videos go through a
-/// 2-tick processing cycle. Filenames starting with `fail` always
-/// fail. PDF: completes immediately like images.
 class FakeUploadBackend {
-  int _nextId = 1;
-  final Map<int, FakeRecord> _records = {};
+  int nextId = 1;
+  final Map<int, FakeRecord> records = {};
 
   Future<MediaUploadResult> upload(MediaUploadRequest req) async {
     await Future<void>.delayed(const Duration(milliseconds: 400));
-    final id = _nextId++;
+    final id = nextId++;
     final uuid = 'fake-$id';
     final downloadUrl = 'memory://$uuid/${req.filename}';
     final isFail = req.filename.toLowerCase().startsWith('fail');
@@ -117,7 +134,7 @@ class FakeUploadBackend {
       );
     }
     if (req.kind == MediaKind.video) {
-      _records[id] = FakeRecord(
+      records[id] = FakeRecord(
         result: MediaUploadResult(
           id: id,
           uuid: uuid,
@@ -127,9 +144,8 @@ class FakeUploadBackend {
         ),
         ticksRemaining: 2,
       );
-      return _records[id]!.result;
+      return records[id]!.result;
     }
-    // image / pdf — synchronous completion.
     return MediaUploadResult(
       id: id,
       uuid: uuid,
@@ -141,7 +157,7 @@ class FakeUploadBackend {
 
   Future<MediaUploadResult> status(int id) async {
     await Future<void>.delayed(const Duration(milliseconds: 200));
-    final rec = _records[id];
+    final rec = records[id];
     if (rec == null) {
       throw StateError('Unknown id: $id');
     }
@@ -159,4 +175,3 @@ class FakeRecord {
   MediaUploadResult result;
   int ticksRemaining;
 }
-
