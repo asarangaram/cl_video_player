@@ -43,3 +43,9 @@ export 'src/widgets/highlight_media.dart';
 export 'src/widgets/highlight_image.dart';
 export 'src/widgets/audio_controller_audio_mute.dart';
 export 'src/widgets/pop_over_video_player.dart';
+
+// Uploader
+export 'src/uploader/file_picker_adapter.dart'
+    show FilePickerAdapter, DefaultFilePickerAdapter, PickedMedia;
+export 'src/uploader/media_upload_types.dart';
+export 'src/uploader/media_uploader.dart';

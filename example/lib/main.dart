@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 
+import 'uploader_demo.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
@@ -242,6 +244,17 @@ class VideoPlayerTestScreenState extends State<VideoPlayerTestScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Video Player Test'),
+        actions: [
+          IconButton(
+            tooltip: 'Open uploader demo',
+            icon: const Icon(Icons.cloud_upload_outlined),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const UploaderDemoScreen(),
+              ),
+            ),
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           onTap: (index) {
