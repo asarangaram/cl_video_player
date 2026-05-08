@@ -244,13 +244,18 @@ class UploadDialogMultiState extends State<UploadDialogMulti> {
               ),
               const Divider(height: 1),
               Flexible(
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: _items.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1),
-                  itemBuilder: (_, i) => KeyedSubtree(
-                    key: _itemKeys[i],
-                    child: UploadItemTile(item: _items[i]),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (var i = 0; i < _items.length; i++) ...[
+                        if (i > 0) const Divider(height: 1),
+                        KeyedSubtree(
+                          key: _itemKeys[i],
+                          child: UploadItemTile(item: _items[i]),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
               ),
