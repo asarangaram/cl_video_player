@@ -24,6 +24,10 @@ dependencies:
   shadcn_ui: ^0.54.0
   # State management
   flutter_riverpod: ^2.6.1
+  # File picking for the uploader module
+  file_picker: ^8.0.0
+  # @immutable
+  meta: ^1.10.0
 
 dev_dependencies:
   flutter_test:
