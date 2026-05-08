@@ -620,19 +620,43 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
+  serial_csv:
+    dependency: transitive
+    description:
+      name: serial_csv
+      sha256: "2d62bb70cb3ce7251383fc86ea9aae1298ab1e57af6ef4e93b6a9751c5c268dd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.2"
   shadcn_ui:
     dependency: transitive
     description:
       name: shadcn_ui
-      sha256: "60f5df5034f5280eadea244773fe456ebf6cb8508708f84e2dd95c4f655ec152"
+      sha256: "132d69a43145a9ead0687935b48224a6565d164ab718796fa344a179a69bed70"
       url: "https://pub.dev"
     source: hosted
-    version: "0.46.4"
+    version: "0.54.0"
   sky_engine:
     dependency: transitive
     description: flutter
     source: sdk
     version: "0.0.0"
+  slang:
+    dependency: transitive
+    description:
+      name: slang
+      sha256: ea6702ed6b1c82065fb2de906fe34ac9298117342e3c2ea2567132efdc81bd17
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.14.0"
+  slang_flutter:
+    dependency: transitive
+    description:
+      name: slang_flutter
+      sha256: dcc4e77527c91b12348fc8bdd43d3eb92d8cea37c12a23a1f9719cdc12c804c6
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.14.0"
   source_span:
     dependency: transitive
     description:
@@ -857,6 +881,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
+  watcher:
+    dependency: transitive
+    description:
+      name: watcher
+      sha256: "1398c9f081a753f9226febe8900fce8f7d0a67163334e1c94a2438339d79d635"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.1"
   web:
     dependency: transitive
     description:
@@ -898,5 +930,5 @@ packages:
     source: hosted
     version: "3.1.3"
 sdks:
-  dart: ">=3.10.3 <4.0.0"
-  flutter: ">=3.38.4"
+  dart: ">=3.11.0 <4.0.0"
+  flutter: ">=3.41.0"
