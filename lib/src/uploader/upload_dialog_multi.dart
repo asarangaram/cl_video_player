@@ -34,6 +34,7 @@ class UploadDialogMulti extends StatefulWidget {
 
 class UploadDialogMultiState extends State<UploadDialogMulti> {
   late List<UploadItemState> _items;
+  late List<GlobalKey> _itemKeys;
   bool _running = false;
   bool _cancelRequested = false;
 
@@ -51,7 +52,21 @@ class UploadDialogMultiState extends State<UploadDialogMulti> {
           phase: UploadItemPhase.queued,
         ),
     ];
+    _itemKeys = [for (var _ in _items) GlobalKey()];
     WidgetsBinding.instance.addPostFrameCallback((_) => runQueue());
+  }
+
+  void scrollItemIntoView(int index) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ctx = _itemKeys[index].currentContext;
+      if (ctx == null) return;
+      Scrollable.ensureVisible(
+        ctx,
+        alignment: 0.5,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+    });
   }
 
   Future<void> runQueue() async {
@@ -70,6 +85,7 @@ class UploadDialogMultiState extends State<UploadDialogMulti> {
 
   Future<void> processItem(int index) async {
     updateItem(index, (s) => s.copyWith(phase: UploadItemPhase.uploading));
+    scrollItemIntoView(index);
     final src = _items[index];
     try {
       final result = await widget.uploadCallback(
@@ -232,7 +248,10 @@ class UploadDialogMultiState extends State<UploadDialogMulti> {
                   shrinkWrap: true,
                   itemCount: _items.length,
                   separatorBuilder: (_, __) => const Divider(height: 1),
-                  itemBuilder: (_, i) => UploadItemTile(item: _items[i]),
+                  itemBuilder: (_, i) => KeyedSubtree(
+                    key: _itemKeys[i],
+                    child: UploadItemTile(item: _items[i]),
+                  ),
                 ),
               ),
               const Divider(height: 1),
