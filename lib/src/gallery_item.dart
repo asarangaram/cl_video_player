@@ -10,10 +10,6 @@ class GalleryItem {
     required this.type,
   });
 
-  final String id;
-  final String url;
-  final GalleryItemType type;
-
   factory GalleryItem.image(String url, {String? id}) {
     return GalleryItem(
       id: id ?? url,
@@ -37,6 +33,10 @@ class GalleryItem {
       type: GalleryItemType.pdf,
     );
   }
+
+  final String id;
+  final String url;
+  final GalleryItemType type;
 
   bool get isImage => type == GalleryItemType.image;
   bool get isVideo => type == GalleryItemType.video;

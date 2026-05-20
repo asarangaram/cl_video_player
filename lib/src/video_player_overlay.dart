@@ -17,9 +17,9 @@ void _log(String message) {
 
 /// Video player that renders outside Flutter's widget tree.
 ///
-/// This bypasses Flutter's platform view system (which has positioning bugs on Safari)
-/// by creating the video element directly in the DOM and positioning it absolutely
-/// to overlay the Flutter canvas.
+/// This bypasses Flutter's platform view system (which has positioning bugs
+/// on Safari) by creating the video element directly in the DOM and
+/// positioning it absolutely to overlay the Flutter canvas.
 ///
 /// Web-only, best for Safari compatibility.
 /// Bypasses Flutter's platform view positioning bugs.
@@ -67,7 +67,8 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
       _containerId = 'overlay-video-${_instanceCounter++}';
 
       // Create container div with fixed position
-      // Position updates every frame via _OverlayVideoPlaceholder, so it scrolls correctly
+      // Position updates every frame via _OverlayVideoPlaceholder, so it
+      // scrolls correctly
       _containerElement = web.HTMLDivElement()
         ..id = _containerId!
         ..style.position = 'fixed'
@@ -85,7 +86,8 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
         ..setAttribute('playsinline', 'true')
         ..setAttribute('webkit-playsinline', 'true')
         ..setAttribute('x-webkit-airplay', 'allow')
-        ..setAttribute('controls', 'true') // Show native controls for manual play
+        // Show native controls for manual play
+        ..setAttribute('controls', 'true')
         ..setAttribute('preload', 'auto') // Start loading immediately
         ..setAttribute('crossorigin', 'anonymous') // Required for CORS
         ..muted = true // Muted for autoplay compliance on Safari
@@ -109,7 +111,7 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
       if (autoPlay) {
         await play();
       }
-    } catch (e) {
+    } on Object catch (e) {
       _log('ERROR in open(): $e');
       _hasError = true;
       _onError?.call(e);
@@ -121,56 +123,55 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
     final video = _videoElement;
     if (video == null) return;
 
-    video.addEventListener(
-        'play',
-        ((web.Event event) {
-          _log('EVENT: play');
-          if (!_lastPlayingState) {
-            _lastPlayingState = true;
-            _onPlayingChanged?.call(true);
-          }
-        }).toJS);
-
-    video.addEventListener(
-        'pause',
-        ((web.Event event) {
-          _log('EVENT: pause');
-          if (_lastPlayingState) {
-            _lastPlayingState = false;
-            _onPlayingChanged?.call(false);
-          }
-        }).toJS);
-
-    video.addEventListener(
-        'playing',
-        ((web.Event event) {
-          _log('EVENT: playing');
-        }).toJS);
-
-    video.addEventListener(
-        'loadedmetadata',
-        ((web.Event event) {
-          _log('EVENT: loadedmetadata - ${video.videoWidth}x${video.videoHeight}');
-        }).toJS);
-
-    video.addEventListener(
-        'durationchange',
-        ((web.Event event) {
-          final dur = video.duration;
-          if (!dur.isNaN && dur.isFinite) {
-            _onDurationChanged
-                ?.call(Duration(milliseconds: (dur * 1000).toInt()));
-          }
-        }).toJS);
-
-    video.addEventListener(
-        'error',
-        ((web.Event event) {
-          final error = video.error;
-          _log('EVENT: error - ${error?.message}');
-          _hasError = true;
-          _onError?.call('Video error: ${error?.message}');
-        }).toJS);
+    video
+      ..addEventListener(
+          'play',
+          ((web.Event event) {
+            _log('EVENT: play');
+            if (!_lastPlayingState) {
+              _lastPlayingState = true;
+              _onPlayingChanged?.call(isPlaying: true);
+            }
+          }).toJS)
+      ..addEventListener(
+          'pause',
+          ((web.Event event) {
+            _log('EVENT: pause');
+            if (_lastPlayingState) {
+              _lastPlayingState = false;
+              _onPlayingChanged?.call(isPlaying: false);
+            }
+          }).toJS)
+      ..addEventListener(
+          'playing',
+          ((web.Event event) {
+            _log('EVENT: playing');
+          }).toJS)
+      ..addEventListener(
+          'loadedmetadata',
+          ((web.Event event) {
+            _log(
+              'EVENT: loadedmetadata - '
+              '${video.videoWidth}x${video.videoHeight}',
+            );
+          }).toJS)
+      ..addEventListener(
+          'durationchange',
+          ((web.Event event) {
+            final dur = video.duration;
+            if (!dur.isNaN && dur.isFinite) {
+              _onDurationChanged
+                  ?.call(Duration(milliseconds: (dur * 1000).toInt()));
+            }
+          }).toJS)
+      ..addEventListener(
+          'error',
+          ((web.Event event) {
+            final error = video.error;
+            _log('EVENT: error - ${error?.message}');
+            _hasError = true;
+            _onError?.call('Video error: ${error?.message}');
+          }).toJS);
   }
 
   Future<void> _waitForLoad() async {
@@ -179,23 +180,22 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
 
     final completer = Completer<void>();
 
-    video.addEventListener(
-        'canplay',
-        ((web.Event event) {
-          if (!completer.isCompleted) {
-            completer.complete();
-          }
-        }).toJS);
-
-    video.addEventListener(
-        'error',
-        ((web.Event event) {
-          if (!completer.isCompleted) {
-            completer.completeError('Failed to load video');
-          }
-        }).toJS);
-
-    video.load();
+    video
+      ..addEventListener(
+          'canplay',
+          ((web.Event event) {
+            if (!completer.isCompleted) {
+              completer.complete();
+            }
+          }).toJS)
+      ..addEventListener(
+          'error',
+          ((web.Event event) {
+            if (!completer.isCompleted) {
+              completer.completeError('Failed to load video');
+            }
+          }).toJS)
+      ..load();
 
     await completer.future.timeout(
       const Duration(seconds: 30),
@@ -284,13 +284,13 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
       _log('play() succeeded (muted)');
 
       // Try to unmute after a short delay
-      Future.delayed(const Duration(milliseconds: 500), () {
+      unawaited(Future.delayed(const Duration(milliseconds: 500), () {
         if (!video.paused) {
           _log('Attempting to unmute...');
           video.muted = false;
         }
-      });
-    } catch (e) {
+      }));
+    } on Object catch (e) {
       _log('play() failed even muted: $e');
     }
   }
@@ -304,8 +304,9 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
   Future<void> setVolume(double volume) async {
     final video = _videoElement;
     if (video != null) {
-      video.volume = volume;
-      video.muted = volume == 0;
+      video
+        ..volume = volume
+        ..muted = volume == 0;
     }
   }
 
@@ -318,7 +319,7 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
   }
 
   @override
-  Future<void> setLooping(bool loop) async {
+  Future<void> setLooping({required bool loop}) async {
     _videoElement?.loop = loop;
   }
 
@@ -361,9 +362,7 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
     // Return a placeholder that we use to track position
     return OverlayVideoPlaceholder(
       player: this,
-      onPositionChanged: (rect) {
-        updatePosition(rect);
-      },
+      onPositionChanged: updatePosition,
     );
   }
 
@@ -387,9 +386,7 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
 /// Placeholder widget that tracks its position and updates the overlay video.
 class OverlayVideoPlaceholder extends StatefulWidget {
   const OverlayVideoPlaceholder({
-    super.key,
-    required this.player,
-    required this.onPositionChanged,
+    required this.player, required this.onPositionChanged, super.key,
   });
 
   final OverlayVideoPlayer player;

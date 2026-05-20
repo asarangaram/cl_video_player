@@ -35,29 +35,27 @@ class MediaKitVideoPlayer implements VideoPlayerInterface {
     ErrorCallback? onError,
   }) async {
     _player = Player(
-      configuration: const PlayerConfiguration(logLevel: MPVLogLevel.error),
+      
     );
     _controller = VideoController(_player!);
 
-    _subscriptions.add(_player!.stream.playing.listen((playing) {
-      _isPlaying = playing;
-      onPlayingChanged?.call(playing);
-    }));
-
-    _subscriptions.add(_player!.stream.position.listen((pos) {
-      _position = pos;
-      onPositionChanged?.call(pos);
-    }));
-
-    _subscriptions.add(_player!.stream.duration.listen((dur) {
-      _duration = dur;
-      onDurationChanged?.call(dur);
-    }));
-
-    _subscriptions.add(_player!.stream.error.listen((error) {
-      _hasError = true;
-      onError?.call(error);
-    }));
+    _subscriptions
+      ..add(_player!.stream.playing.listen((playing) {
+        _isPlaying = playing;
+        onPlayingChanged?.call(isPlaying: playing);
+      }))
+      ..add(_player!.stream.position.listen((pos) {
+        _position = pos;
+        onPositionChanged?.call(pos);
+      }))
+      ..add(_player!.stream.duration.listen((dur) {
+        _duration = dur;
+        onDurationChanged?.call(dur);
+      }))
+      ..add(_player!.stream.error.listen((error) {
+        _hasError = true;
+        onError?.call(error);
+      }));
   }
 
   @override
@@ -67,7 +65,7 @@ class MediaKitVideoPlayer implements VideoPlayerInterface {
       await _player!.open(media, play: autoPlay);
       _isInitialized = true;
       _hasError = false;
-    } catch (e) {
+    } on Object {
       _hasError = true;
       rethrow;
     }
@@ -91,7 +89,7 @@ class MediaKitVideoPlayer implements VideoPlayerInterface {
   }
 
   @override
-  Future<void> setLooping(bool loop) async {
+  Future<void> setLooping({required bool loop}) async {
     await _player?.setPlaylistMode(
       loop ? PlaylistMode.single : PlaylistMode.none,
     );
@@ -120,20 +118,22 @@ class MediaKitVideoPlayer implements VideoPlayerInterface {
     if (_controller == null) {
       return const SizedBox.shrink();
     }
+    final controls =
+        showControls ? AdaptiveVideoControls as VideoControlsBuilder? : null;
     return Video(
       controller: _controller!,
       fit: fit,
-      controls: showControls ? AdaptiveVideoControls : NoVideoControls,
+      controls: controls,
     );
   }
 
   @override
   void dispose() {
     for (final sub in _subscriptions) {
-      sub.cancel();
+      unawaited(sub.cancel());
     }
     _subscriptions.clear();
-    _player?.dispose();
+    unawaited(_player?.dispose());
     _player = null;
     _controller = null;
   }

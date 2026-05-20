@@ -42,7 +42,7 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
   }
 
   @override
-  Future<void> setLooping(bool loop) async {
+  Future<void> setLooping({required bool loop}) async {
     throw UnsupportedError('HtmlVideoPlayer is only available on web.');
   }
 

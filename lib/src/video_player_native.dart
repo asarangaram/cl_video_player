@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -12,6 +14,8 @@ import 'video_player_interface.dart';
 /// - Set [applySafariFirstFrameFix] to true to append #t=0.001 to URLs
 /// - This forces Safari to seek and render the first frame
 class NativeVideoPlayer implements VideoPlayerInterface {
+
+  NativeVideoPlayer({this.applySafariFirstFrameFix = false});
   VideoPlayerController? _controller;
 
   bool _hasError = false;
@@ -26,8 +30,6 @@ class NativeVideoPlayer implements VideoPlayerInterface {
   /// Whether to apply Safari first-frame fix by appending #t=0.001 to URLs.
   /// Set this to true when running on Safari/WebKit browsers.
   final bool applySafariFirstFrameFix;
-
-  NativeVideoPlayer({this.applySafariFirstFrameFix = false});
 
   @override
   Future<void> initialize({
@@ -88,7 +90,7 @@ class NativeVideoPlayer implements VideoPlayerInterface {
     // Notify playing state changes (only when changed)
     if (value.isPlaying != _lastPlayingState) {
       _lastPlayingState = value.isPlaying;
-      _onPlayingChanged?.call(value.isPlaying);
+      _onPlayingChanged?.call(isPlaying: value.isPlaying);
     }
 
     // Notify position changes (throttled to avoid excessive updates)
@@ -123,7 +125,7 @@ class NativeVideoPlayer implements VideoPlayerInterface {
   }
 
   @override
-  Future<void> setLooping(bool loop) async {
+  Future<void> setLooping({required bool loop}) async {
     await _controller?.setLooping(loop);
   }
 
@@ -175,7 +177,7 @@ class NativeVideoPlayer implements VideoPlayerInterface {
   @override
   void dispose() {
     _controller?.removeListener(_onControllerUpdate);
-    _controller?.dispose();
+    unawaited(_controller?.dispose());
     _controller = null;
   }
 }

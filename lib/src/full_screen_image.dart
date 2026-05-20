@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 void showFullScreenImage(BuildContext context, String imageUrl) {
   final isNetworkImage =
       imageUrl.startsWith('http://') || imageUrl.startsWith('https://');
 
-  showDialog(
+  unawaited(showDialog<void>(
     context: context,
     barrierColor: Colors.black87,
     builder: (context) {
@@ -17,7 +19,7 @@ void showFullScreenImage(BuildContext context, String imageUrl) {
               Center(
                 child: InteractiveViewer(
                   minScale: 0.5,
-                  maxScale: 4.0,
+                  maxScale: 4,
                   child: isNetworkImage
                       ? Image.network(imageUrl, fit: BoxFit.contain)
                       : Image.asset(imageUrl, fit: BoxFit.contain),
@@ -36,5 +38,5 @@ void showFullScreenImage(BuildContext context, String imageUrl) {
         ),
       );
     },
-  );
+  ));
 }

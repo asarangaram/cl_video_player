@@ -8,26 +8,26 @@ environment:
   flutter: ">=3.10.0"
 
 dependencies:
-  flutter:
-    sdk: flutter
-  # For NativeVideoPlayer
-  video_player: 2.11.1
-  # For MediaKitVideoPlayer
-  media_kit: 1.2.6
-  media_kit_video: 2.0.1
-  media_kit_libs_video: 1.0.7
-  # For HtmlVideoPlayer and OverlayVideoPlayer (web only)
-  web: 1.1.1
-  # For gallery video player visibility tracking
-  visibility_detector: 0.4.0+2
-  # UI components
-  shadcn_ui: 0.54.0
-  # State management
-  flutter_riverpod: 2.6.1
   # File picking for the uploader module
   file_picker: 8.3.7
+  flutter:
+    sdk: flutter
+  # State management
+  flutter_riverpod: 2.6.1
+  # For MediaKitVideoPlayer
+  media_kit: 1.2.6
+  media_kit_libs_video: 1.0.7
+  media_kit_video: 2.0.1
   # @immutable
   meta: 1.17.0
+  # UI components
+  shadcn_ui: 0.54.0
+  # For NativeVideoPlayer
+  video_player: 2.11.1
+  # For gallery video player visibility tracking
+  visibility_detector: 0.4.0+2
+  # For HtmlVideoPlayer and OverlayVideoPlayer (web only)
+  web: 1.1.1
 
 dev_dependencies:
   flutter_test:

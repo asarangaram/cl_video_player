@@ -1,3 +1,8 @@
+import 'dart:async';
+
+import 'package:cl_video_player/cl_video_player.dart' show PopOverVideoPlayer;
+import 'package:cl_video_player/src/widgets/pop_over_video_player.dart'
+    show PopOverVideoPlayer;
 import 'package:flutter/material.dart';
 
 import '../gallery_video_player.dart' show VideoPlayerFactory;
@@ -12,10 +17,8 @@ import '../video_player_interface.dart';
 /// conflicts with the video player widget.
 class PopOverVideoPlayerOverlay extends StatefulWidget {
   const PopOverVideoPlayerOverlay({
-    super.key,
-    required this.videoUrl,
+    required this.videoUrl, required this.onClose, super.key,
     this.playerFactory,
-    required this.onClose,
   });
 
   final String videoUrl;
@@ -39,7 +42,7 @@ class PopOverVideoPlayerOverlayState
   @override
   void initState() {
     super.initState();
-    initializePlayer();
+    unawaited(initializePlayer());
   }
 
   @override
@@ -58,8 +61,8 @@ class PopOverVideoPlayerOverlayState
 
     try {
       await player!.initialize(
-        onPlayingChanged: (playing) {
-          if (mounted) setState(() => isPlaying = playing);
+        onPlayingChanged: ({required isPlaying}) {
+          if (mounted) setState(() => this.isPlaying = isPlaying);
         },
         onPositionChanged: (pos) {
           if (mounted) setState(() => position = pos);
@@ -72,12 +75,12 @@ class PopOverVideoPlayerOverlayState
         },
       );
 
-      await player!.open(widget.videoUrl, autoPlay: true);
+      await player!.open(widget.videoUrl);
 
       if (mounted) {
         setState(() => isInitialized = true);
       }
-    } catch (e) {
+    } on Object {
       if (mounted) {
         setState(() => hasError = true);
       }
@@ -115,7 +118,7 @@ class PopOverVideoPlayerOverlayState
                   buildTitleBar(),
                   AspectRatio(
                     aspectRatio: 16 / 9,
-                    child: Container(
+                    child: ColoredBox(
                       color: Colors.black,
                       child: Stack(
                         fit: StackFit.expand,
@@ -195,14 +198,14 @@ class PopOverVideoPlayerOverlayState
       );
     }
 
-    return player!.buildVideoWidget(fit: BoxFit.contain, showControls: false);
+    return player!.buildVideoWidget();
   }
 
   Widget buildControls() {
     return Positioned.fill(
       child: GestureDetector(
         onTap: togglePlayPause,
-        child: Container(
+        child: ColoredBox(
           color: Colors.transparent,
           child: buildPlayPauseOverlay(),
         ),
@@ -242,9 +245,9 @@ class PopOverVideoPlayerOverlayState
 
   void togglePlayPause() {
     if (isPlaying) {
-      player!.pause();
+      unawaited(player!.pause());
     } else {
-      player!.play();
+      unawaited(player!.play());
     }
   }
 }

@@ -3,17 +3,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-import 'gallery_item.dart';
-import 'gallery_thumbnail_strip.dart';
 import 'full_screen_image.dart';
+import 'gallery_item.dart';
 import 'gallery_pdf_card.dart';
+import 'gallery_thumbnail_strip.dart';
 import 'gallery_video_player.dart';
 
 class GalleryMobile extends StatefulWidget {
   const GalleryMobile({
-    super.key,
-    required this.items,
-    required this.playerFactory,
+    required this.items, required this.playerFactory, super.key,
     this.onPdfDownload,
     this.height = 250.0,
     this.imageSpacing = 16.0,
@@ -65,8 +63,9 @@ class GalleryMobileState extends State<GalleryMobile> {
   @override
   void dispose() {
     stopAutoScroll();
-    pageController.removeListener(handlePageScroll);
-    pageController.dispose();
+    pageController
+      ..removeListener(handlePageScroll)
+      ..dispose();
     super.dispose();
   }
 
@@ -160,7 +159,7 @@ class GalleryMobileState extends State<GalleryMobile> {
     );
   }
 
-  void handleVideoPlayStateChanged(String videoId, bool isPlaying) {
+  void handleVideoPlayStateChanged(String videoId, {required bool isPlaying}) {
     if (isPlaying) {
       setState(() => activeVideoId = videoId);
       if (autoScrollEnabled) disableAutoScrollOnInteraction();
@@ -176,7 +175,7 @@ class GalleryMobileState extends State<GalleryMobile> {
   ) {
     if (loadingProgress == null) return child;
     final theme = ShadTheme.of(context);
-    return Container(
+    return ColoredBox(
       color: theme.colorScheme.muted,
       child: Center(
         child: CircularProgressIndicator(
@@ -195,7 +194,7 @@ class GalleryMobileState extends State<GalleryMobile> {
     StackTrace? stackTrace,
   ) {
     final theme = ShadTheme.of(context);
-    return Container(
+    return ColoredBox(
       color: theme.colorScheme.muted,
       child: Center(
         child: Icon(
@@ -223,11 +222,11 @@ class GalleryMobileState extends State<GalleryMobile> {
 
   void handleThumbnailTap(int index) {
     if (autoScrollEnabled) disableAutoScrollOnInteraction();
-    pageController.animateToPage(
+    unawaited(pageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
-    );
+    ));
   }
 
   // Auto-scroll
@@ -255,17 +254,17 @@ class GalleryMobileState extends State<GalleryMobile> {
 
     final nextPage = currentPage + 1;
     if (nextPage < widget.items.length) {
-      pageController.animateToPage(
+      unawaited(pageController.animateToPage(
         nextPage,
         duration: widget.autoScrollDuration,
         curve: Curves.easeInOut,
-      );
+      ));
     } else {
-      pageController.animateToPage(
+      unawaited(pageController.animateToPage(
         0,
         duration: widget.autoScrollDuration,
         curve: Curves.easeInOut,
-      );
+      ));
     }
   }
 }

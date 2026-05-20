@@ -37,7 +37,7 @@ class MediaUploader extends StatelessWidget {
       MediaKind.pdf,
     },
     this.usageContext,
-    this.pickerAdapter = const DefaultFilePickerAdapter(),
+    this.pickerAdapter = defaultFilePicker,
     this.pollInterval = const Duration(seconds: 2),
     this.pollTimeout = const Duration(minutes: 5),
     super.key,
@@ -55,7 +55,7 @@ class MediaUploader extends StatelessWidget {
   final Duration pollTimeout;
 
   Future<void> openPicker(BuildContext context) async {
-    final picked = await pickerAdapter.pick(
+    final picked = await pickerAdapter(
       allowMultiple: mode == MediaUploaderMode.multi,
       allowedKinds: allowedKinds,
     );

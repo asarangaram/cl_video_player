@@ -9,9 +9,7 @@ import 'video_url_utils.dart';
 /// to handle platform-specific download/open behavior.
 class GalleryPdfCard extends StatelessWidget {
   const GalleryPdfCard({
-    super.key,
-    required this.pdfUrl,
-    required this.onDownload,
+    required this.pdfUrl, required this.onDownload, super.key,
   });
 
   /// The original PDF URL (used to derive the preview image URL).

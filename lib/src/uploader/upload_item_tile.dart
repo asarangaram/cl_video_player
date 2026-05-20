@@ -58,7 +58,7 @@ class UploadItemTile extends StatelessWidget {
         gaplessPlayback: true,
       );
     }
-    final IconData icon = item.kind == MediaKind.video
+    final icon = item.kind == MediaKind.video
         ? Icons.videocam_outlined
         : Icons.picture_as_pdf_outlined;
     return Container(

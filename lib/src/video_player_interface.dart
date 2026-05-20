@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Callback for playing state changes.
-typedef PlayingStateCallback = void Function(bool isPlaying);
+typedef PlayingStateCallback = void Function({required bool isPlaying});
 
 /// Callback for position changes.
 typedef PositionCallback = void Function(Duration position);
@@ -49,7 +49,7 @@ abstract interface class VideoPlayerInterface {
   Future<void> seekTo(Duration position);
 
   /// Set looping mode.
-  Future<void> setLooping(bool loop);
+  Future<void> setLooping({required bool loop});
 
   /// Current playing state.
   bool get isPlaying;

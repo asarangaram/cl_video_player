@@ -55,11 +55,11 @@ class MediaControlNotifier extends Notifier<MediaControlState> {
     state = state.copyWith(isPaused: !state.isPaused);
   }
 
-  void setMuted(bool muted) {
+  void setMuted({required bool muted}) {
     state = state.copyWith(isMuted: muted);
   }
 
-  void setPaused(bool paused) {
+  void setPaused({required bool paused}) {
     state = state.copyWith(isPaused: paused);
   }
 }

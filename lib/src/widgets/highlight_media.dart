@@ -1,12 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import '../gallery_video_player.dart' show VideoPlayerFactory;
 import '../providers/media_control.dart';
 import '../video_player_interface.dart';
 import '../video_url_utils.dart';
-import '../gallery_video_player.dart' show VideoPlayerFactory;
 import 'highlight_image.dart';
 
 /// Platform-agnostic media renderer for video or image content.
@@ -26,8 +28,7 @@ import 'highlight_image.dart';
 /// what URL and factory to pass based on platform context.
 class HighlightMedia extends ConsumerStatefulWidget {
   const HighlightMedia({
-    super.key,
-    required this.url,
+    required this.url, super.key,
     this.playerFactory,
     this.fit = BoxFit.cover,
   });
@@ -59,7 +60,7 @@ class HighlightMediaState extends ConsumerState<HighlightMedia> {
   void initState() {
     super.initState();
     if (isVideo && widget.playerFactory != null) {
-      initializeVideoPlayer();
+      unawaited(initializeVideoPlayer());
     }
   }
 
@@ -71,7 +72,7 @@ class HighlightMediaState extends ConsumerState<HighlightMedia> {
         disposePlayer();
       }
       if (isVideo && widget.playerFactory != null) {
-        initializeVideoPlayer();
+        unawaited(initializeVideoPlayer());
       }
     }
   }
@@ -94,7 +95,7 @@ class HighlightMediaState extends ConsumerState<HighlightMedia> {
         },
       );
 
-      await player!.setLooping(true);
+      await player!.setLooping(loop: true);
 
       if (!mounted) return;
 
@@ -107,7 +108,7 @@ class HighlightMediaState extends ConsumerState<HighlightMedia> {
       if (mounted) {
         setState(() => isVideoInitialized = true);
       }
-    } catch (e) {
+    } on Object catch (e) {
       debugPrint('HighlightMedia: Video initialization failed: $e');
       if (mounted) {
         setState(() => hasError = true);
@@ -136,10 +137,10 @@ class HighlightMediaState extends ConsumerState<HighlightMedia> {
     final isPaused = ref.read(mediaControlProvider).isPaused;
     if (!isVisible) {
       // Scrolled offscreen — pause regardless of user state
-      player!.pause();
+      unawaited(player!.pause());
     } else if (!isPaused) {
       // Back onscreen and user hasn't paused — resume
-      player!.play();
+      unawaited(player!.play());
     }
   }
 
@@ -150,14 +151,14 @@ class HighlightMediaState extends ConsumerState<HighlightMedia> {
     // React to media control changes
     ref.listen<MediaControlState>(mediaControlProvider, (previous, current) {
       if (previous?.isMuted != current.isMuted) {
-        player?.setVolume(current.isMuted ? 0.0 : 1.0);
+        unawaited(player?.setVolume(current.isMuted ? 0.0 : 1.0));
       }
       if (previous?.isPaused != current.isPaused) {
         if (player == null || !isVideoInitialized) return;
         if (current.isPaused || !isVisible) {
-          player!.pause();
+          unawaited(player!.pause());
         } else {
-          player!.play();
+          unawaited(player!.play());
         }
       }
     });
@@ -193,14 +194,14 @@ class HighlightMediaState extends ConsumerState<HighlightMedia> {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: togglePlaybackPaused,
-        child: player!.buildVideoWidget(fit: widget.fit, showControls: false),
+        child: player!.buildVideoWidget(fit: widget.fit),
       ),
     );
   }
 
   Widget buildLoadingWidget(BuildContext context) {
     final theme = ShadTheme.of(context);
-    return Container(
+    return ColoredBox(
       color: theme.colorScheme.muted,
       child: const Center(
         child: CircularProgressIndicator(),
@@ -210,7 +211,7 @@ class HighlightMediaState extends ConsumerState<HighlightMedia> {
 
   Widget buildErrorWidget(BuildContext context) {
     final theme = ShadTheme.of(context);
-    return Container(
+    return ColoredBox(
       color: theme.colorScheme.muted,
       child: Center(
         child: Column(

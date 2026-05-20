@@ -165,8 +165,8 @@ class FakeUploadBackend {
       rec.ticksRemaining--;
       return rec.result;
     }
-    rec.result = rec.result.copyWith(status: MediaConversionStatus.completed);
-    return rec.result;
+    return rec.result =
+        rec.result.copyWith(status: MediaConversionStatus.completed);
   }
 }
 

@@ -28,7 +28,9 @@ class VideoUrlUtils {
 
     for (final ext in _videoExtensions) {
       if (lowerUrl.endsWith(ext)) {
-        return '${urlWithoutQuery.substring(0, urlWithoutQuery.length - ext.length)}.webp';
+        final base =
+            urlWithoutQuery.substring(0, urlWithoutQuery.length - ext.length);
+        return '$base.webp';
       }
     }
 
@@ -46,7 +48,9 @@ class VideoUrlUtils {
 
     for (final ext in _videoExtensions) {
       if (lowerUrl.endsWith(ext)) {
-        return '${urlWithoutQuery.substring(0, urlWithoutQuery.length - ext.length)}_poster.webp';
+        final base =
+            urlWithoutQuery.substring(0, urlWithoutQuery.length - ext.length);
+        return '${base}_poster.webp';
       }
     }
 
@@ -57,11 +61,12 @@ class VideoUrlUtils {
   /// Check if URL points to a video file.
   static bool isVideoUrl(String url) {
     final lowerUrl = _stripQuery(url).toLowerCase();
-    return _videoExtensions.any((ext) => lowerUrl.endsWith(ext)) ||
+    return _videoExtensions.any(lowerUrl.endsWith) ||
         lowerUrl.endsWith('.m3u8');
   }
 
-  /// Check if URL points to an animated WebP (not a video, but used as preview).
+  /// Check if URL points to an animated WebP (not a video, but used as
+  /// preview).
   static bool isAnimatedWebpUrl(String url) {
     final lowerUrl = _stripQuery(url).toLowerCase();
     return lowerUrl.endsWith('.webp') && !lowerUrl.endsWith('_poster.webp');
@@ -82,7 +87,8 @@ class VideoUrlUtils {
     final lowerUrl = urlWithoutQuery.toLowerCase();
 
     if (lowerUrl.endsWith('.pdf')) {
-      return '${urlWithoutQuery.substring(0, urlWithoutQuery.length - 4)}_poster.png';
+      final base = urlWithoutQuery.substring(0, urlWithoutQuery.length - 4);
+      return '${base}_poster.png';
     }
 
     return '${urlWithoutQuery}_poster.png';

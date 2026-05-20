@@ -89,9 +89,10 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
           _logVideoState();
 
           // Fix parent sizing after a short delay (once element is in DOM)
-          Future.delayed(const Duration(milliseconds: 100), () {
-            _fixPlatformViewSizing();
-          });
+          unawaited(Future.delayed(
+            const Duration(milliseconds: 100),
+            _fixPlatformViewSizing,
+          ));
 
           return _videoElement!;
         },
@@ -119,7 +120,7 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
         _log('Starting autoplay...');
         await play();
       }
-    } catch (e) {
+    } on Object catch (e) {
       _log('ERROR in open(): $e');
       _hasError = true;
       _onError?.call(e);
@@ -155,7 +156,9 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
     // Get computed dimensions
     final rect = video.getBoundingClientRect();
     _log(
-        '  - boundingRect: ${rect.width}x${rect.height} at (${rect.left}, ${rect.top})');
+      '  - boundingRect: ${rect.width}x${rect.height} '
+      'at (${rect.left}, ${rect.top})',
+    );
   }
 
   void _setupEventListeners() {
@@ -164,87 +167,83 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
 
     _log('Setting up event listeners...');
 
-    video.addEventListener(
-      'play',
-      ((web.Event event) {
-        _log('EVENT: play');
-        if (!_lastPlayingState) {
-          _lastPlayingState = true;
-          _onPlayingChanged?.call(true);
-        }
-      }).toJS,
-    );
-
-    video.addEventListener(
-      'pause',
-      ((web.Event event) {
-        _log('EVENT: pause');
-        if (_lastPlayingState) {
-          _lastPlayingState = false;
-          _onPlayingChanged?.call(false);
-        }
-      }).toJS,
-    );
-
-    video.addEventListener(
-      'playing',
-      ((web.Event event) {
-        _log('EVENT: playing (video frames are rendering)');
-        _logVideoState();
-      }).toJS,
-    );
-
-    video.addEventListener(
-      'loadedmetadata',
-      ((web.Event event) {
-        _log('EVENT: loadedmetadata');
-        _logVideoState();
-      }).toJS,
-    );
-
-    video.addEventListener(
-      'loadeddata',
-      ((web.Event event) {
-        _log('EVENT: loadeddata (first frame available)');
-        _logVideoState();
-      }).toJS,
-    );
-
-    video.addEventListener(
-      'durationchange',
-      ((web.Event event) {
-        _log('EVENT: durationchange - ${video.duration}');
-        final dur = video.duration;
-        if (!dur.isNaN && dur.isFinite) {
-          _onDurationChanged
-              ?.call(Duration(milliseconds: (dur * 1000).toInt()));
-        }
-      }).toJS,
-    );
-
-    video.addEventListener(
-      'error',
-      ((web.Event event) {
-        final error = video.error;
-        _log('EVENT: error - code: ${error?.code}, message: ${error?.message}');
-        _hasError = true;
-        _onError?.call('Video playback error: ${error?.message}');
-      }).toJS,
-    );
-
-    video.addEventListener(
-      'stalled',
-      ((web.Event event) {
-        _log('EVENT: stalled (buffering)');
-      }).toJS,
-    );
-
-    video.addEventListener(
-      'waiting',
-      ((web.Event event) {
-        _log('EVENT: waiting (buffering)');
-      }).toJS,
-    );
+    video
+      ..addEventListener(
+        'play',
+        ((web.Event event) {
+          _log('EVENT: play');
+          if (!_lastPlayingState) {
+            _lastPlayingState = true;
+            _onPlayingChanged?.call(isPlaying: true);
+          }
+        }).toJS,
+      )
+      ..addEventListener(
+        'pause',
+        ((web.Event event) {
+          _log('EVENT: pause');
+          if (_lastPlayingState) {
+            _lastPlayingState = false;
+            _onPlayingChanged?.call(isPlaying: false);
+          }
+        }).toJS,
+      )
+      ..addEventListener(
+        'playing',
+        ((web.Event event) {
+          _log('EVENT: playing (video frames are rendering)');
+          _logVideoState();
+        }).toJS,
+      )
+      ..addEventListener(
+        'loadedmetadata',
+        ((web.Event event) {
+          _log('EVENT: loadedmetadata');
+          _logVideoState();
+        }).toJS,
+      )
+      ..addEventListener(
+        'loadeddata',
+        ((web.Event event) {
+          _log('EVENT: loadeddata (first frame available)');
+          _logVideoState();
+        }).toJS,
+      )
+      ..addEventListener(
+        'durationchange',
+        ((web.Event event) {
+          _log('EVENT: durationchange - ${video.duration}');
+          final dur = video.duration;
+          if (!dur.isNaN && dur.isFinite) {
+            _onDurationChanged
+                ?.call(Duration(milliseconds: (dur * 1000).toInt()));
+          }
+        }).toJS,
+      )
+      ..addEventListener(
+        'error',
+        ((web.Event event) {
+          final error = video.error;
+          _log(
+            'EVENT: error - code: ${error?.code}, '
+            'message: ${error?.message}',
+          );
+          _hasError = true;
+          _onError?.call('Video playback error: ${error?.message}');
+        }).toJS,
+      )
+      ..addEventListener(
+        'stalled',
+        ((web.Event event) {
+          _log('EVENT: stalled (buffering)');
+        }).toJS,
+      )
+      ..addEventListener(
+        'waiting',
+        ((web.Event event) {
+          _log('EVENT: waiting (buffering)');
+        }).toJS,
+      );
   }
 
   Future<void> _waitForLoad() async {
@@ -253,26 +252,24 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
 
     final completer = Completer<void>();
 
-    video.addEventListener(
-      'canplay',
-      ((web.Event event) {
-        if (!completer.isCompleted) {
-          completer.complete();
-        }
-      }).toJS,
-    );
-
-    video.addEventListener(
-      'error',
-      ((web.Event event) {
-        if (!completer.isCompleted) {
-          completer.completeError('Failed to load video');
-        }
-      }).toJS,
-    );
-
-    // Load the video
-    video.load();
+    video
+      ..addEventListener(
+        'canplay',
+        ((web.Event event) {
+          if (!completer.isCompleted) {
+            completer.complete();
+          }
+        }).toJS,
+      )
+      ..addEventListener(
+        'error',
+        ((web.Event event) {
+          if (!completer.isCompleted) {
+            completer.completeError('Failed to load video');
+          }
+        }).toJS,
+      )
+      ..load();
 
     // Timeout after 30 seconds
     await completer.future.timeout(
@@ -295,7 +292,9 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
         // Log state every 5 seconds during playback
         if (timer.tick % 20 == 0) {
           _log(
-              'Periodic state check (${video.currentTime.toStringAsFixed(1)}s):');
+            'Periodic state check '
+            '(${video.currentTime.toStringAsFixed(1)}s):',
+          );
           _logVideoState();
           _inspectDomPlacement();
         }
@@ -308,20 +307,23 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
     if (video == null) return;
 
     final parent = video.parentElement;
-    if (parent != null && parent is web.HTMLElement) {
+    if (parent != null && parent.isA<web.HTMLElement>()) {
+      final parentEl = parent as web.HTMLElement;
       _log('Fixing parent element sizing...');
       // Fix the flt-platform-view styling
-      parent.style.display = 'block';
-      parent.style.width = '100%';
-      parent.style.height = '100%';
+      parentEl.style
+        ..display = 'block'
+        ..width = '100%'
+        ..height = '100%';
       _log('Parent style fixed: display=block, width=100%, height=100%');
 
       // Also check grandparent
-      final grandparent = parent.parentElement;
-      if (grandparent != null && grandparent is web.HTMLElement) {
-        grandparent.style.display = 'block';
-        grandparent.style.width = '100%';
-        grandparent.style.height = '100%';
+      final grandparent = parentEl.parentElement;
+      if (grandparent != null && grandparent.isA<web.HTMLElement>()) {
+        (grandparent as web.HTMLElement).style
+          ..display = 'block'
+          ..width = '100%'
+          ..height = '100%';
         _log('Grandparent style fixed');
       }
     }
@@ -341,7 +343,10 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
       final id = current.id;
       final classes = current.className;
       path.add(
-          '$tag${id.isNotEmpty ? "#$id" : ""}${classes.isNotEmpty ? ".$classes" : ""}');
+        '$tag'
+        '${id.isNotEmpty ? "#$id" : ""}'
+        '${classes.isNotEmpty ? ".$classes" : ""}',
+      );
       current = current.parentElement;
       depth++;
     }
@@ -373,7 +378,7 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
       await _videoElement?.play().toDart;
       _log('play() succeeded');
       _logVideoState();
-    } catch (e) {
+    } on Object catch (e) {
       _log('play() failed: $e - trying muted');
       // Autoplay might be blocked, try muted
       _videoElement?.muted = true;
@@ -392,8 +397,9 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
   Future<void> setVolume(double volume) async {
     final video = _videoElement;
     if (video != null) {
-      video.volume = volume;
-      video.muted = volume == 0;
+      video
+        ..volume = volume
+        ..muted = volume == 0;
     }
   }
 
@@ -406,7 +412,7 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
   }
 
   @override
-  Future<void> setLooping(bool loop) async {
+  Future<void> setLooping({required bool loop}) async {
     _videoElement?.loop = loop;
   }
 
@@ -438,10 +444,15 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
     bool showControls = false,
   }) {
     _log(
-        'buildVideoWidget() called - viewType: $_viewType, videoElement: ${_videoElement != null}');
+      'buildVideoWidget() called - viewType: $_viewType, '
+      'videoElement: ${_videoElement != null}',
+    );
 
     if (_viewType == null || _videoElement == null) {
-      _log('buildVideoWidget() returning SizedBox.shrink (no viewType or videoElement)');
+      _log(
+        'buildVideoWidget() returning SizedBox.shrink '
+        '(no viewType or videoElement)',
+      );
       return const SizedBox.shrink();
     }
 
@@ -457,7 +468,10 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
     };
     _videoElement!.style.objectFit = objectFit;
 
-    _log('buildVideoWidget() returning HtmlElementView with viewType: $_viewType');
+    _log(
+      'buildVideoWidget() returning HtmlElementView with '
+      'viewType: $_viewType',
+    );
     _logVideoState();
 
     // Wrap in SizedBox.expand to ensure Flutter gives it proper dimensions

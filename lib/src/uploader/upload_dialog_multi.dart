@@ -52,7 +52,7 @@ class UploadDialogMultiState extends State<UploadDialogMulti> {
           phase: UploadItemPhase.queued,
         ),
     ];
-    _itemKeys = [for (var _ in _items) GlobalKey()];
+    _itemKeys = [for (final _ in _items) GlobalKey()];
     WidgetsBinding.instance.addPostFrameCallback((_) => runQueue());
   }
 
@@ -60,12 +60,12 @@ class UploadDialogMultiState extends State<UploadDialogMulti> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final ctx = _itemKeys[index].currentContext;
       if (ctx == null) return;
-      Scrollable.ensureVisible(
+      unawaited(Scrollable.ensureVisible(
         ctx,
         alignment: 0.5,
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOut,
-      );
+      ));
     });
   }
 
@@ -125,12 +125,12 @@ class UploadDialogMultiState extends State<UploadDialogMulti> {
           );
           await pollUntilTerminal(index, result.id);
       }
-    } catch (e) {
+    } on Object catch (e) {
       updateItem(
         index,
         (s) => s.copyWith(
           phase: UploadItemPhase.failed,
-          error: () => e.toString(),
+          error: e.toString,
         ),
       );
     }
@@ -172,12 +172,12 @@ class UploadDialogMultiState extends State<UploadDialogMulti> {
           );
           return;
         }
-      } catch (e) {
+      } on Object catch (e) {
         updateItem(
           index,
           (s) => s.copyWith(
             phase: UploadItemPhase.failed,
-            error: () => e.toString(),
+            error: e.toString,
           ),
         );
         return;

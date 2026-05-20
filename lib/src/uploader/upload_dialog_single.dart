@@ -74,7 +74,7 @@ class UploadDialogSingleState extends State<UploadDialogSingle> {
         ),
       );
       handleResult(result);
-    } catch (e) {
+    } on Object catch (e) {
       failWith(e.toString());
     }
   }
@@ -111,7 +111,7 @@ class UploadDialogSingleState extends State<UploadDialogSingle> {
         } else if (r.status == MediaConversionStatus.failed) {
           failWith(r.error ?? 'Conversion failed');
         }
-      } catch (e) {
+      } on Object catch (e) {
         failWith(e.toString());
       }
     });

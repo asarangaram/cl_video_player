@@ -42,7 +42,7 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
   }
 
   @override
-  Future<void> setLooping(bool loop) async {
+  Future<void> setLooping({required bool loop}) async {
     throw UnsupportedError('OverlayVideoPlayer is only available on web.');
   }
 
@@ -81,9 +81,7 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
 /// Stub placeholder widget for non-web platforms.
 class OverlayVideoPlaceholder extends StatelessWidget {
   const OverlayVideoPlaceholder({
-    super.key,
-    required this.player,
-    required this.onPositionChanged,
+    required this.player, required this.onPositionChanged, super.key,
   });
 
   final OverlayVideoPlayer player;

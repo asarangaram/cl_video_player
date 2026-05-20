@@ -3,17 +3,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
+import 'full_screen_image.dart';
 import 'gallery_item.dart';
 import 'gallery_navigation_button.dart';
-import 'full_screen_image.dart';
 import 'gallery_pdf_card.dart';
 import 'gallery_video_player.dart';
 
 class GalleryDesktop extends StatefulWidget {
   const GalleryDesktop({
-    super.key,
-    required this.items,
-    required this.playerFactory,
+    required this.items, required this.playerFactory, super.key,
     this.onPdfDownload,
     this.height = 300.0,
     this.imageSpacing = 16.0,
@@ -79,8 +77,9 @@ class GalleryDesktopState extends State<GalleryDesktop> {
   @override
   void dispose() {
     stopAutoScroll();
-    scrollController.removeListener(handleScrollUpdate);
-    scrollController.dispose();
+    scrollController
+      ..removeListener(handleScrollUpdate)
+      ..dispose();
     super.dispose();
   }
 
@@ -217,7 +216,7 @@ class GalleryDesktopState extends State<GalleryDesktop> {
     );
   }
 
-  void handleVideoPlayStateChanged(String videoId, bool isPlaying) {
+  void handleVideoPlayStateChanged(String videoId, {required bool isPlaying}) {
     if (isPlaying) {
       setState(() => activeVideoId = videoId);
       if (autoScrollEnabled) disableAutoScrollOnInteraction();
@@ -233,7 +232,7 @@ class GalleryDesktopState extends State<GalleryDesktop> {
   ) {
     if (loadingProgress == null) return child;
     final theme = ShadTheme.of(context);
-    return Container(
+    return ColoredBox(
       color: theme.colorScheme.muted,
       child: Center(
         child: CircularProgressIndicator(
@@ -252,7 +251,7 @@ class GalleryDesktopState extends State<GalleryDesktop> {
     StackTrace? stackTrace,
   ) {
     final theme = ShadTheme.of(context);
-    return Container(
+    return ColoredBox(
       color: theme.colorScheme.muted,
       child: Center(
         child: Icon(
@@ -303,11 +302,11 @@ class GalleryDesktopState extends State<GalleryDesktop> {
       0.0,
       scrollController.position.maxScrollExtent,
     );
-    scrollController.animateTo(
+    unawaited(scrollController.animateTo(
       targetOffset,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
-    );
+    ));
   }
 
   void disableAutoScrollOnInteraction() {
@@ -342,26 +341,24 @@ class GalleryDesktopState extends State<GalleryDesktop> {
 
     final scrollAmount = currentImageWidth + widget.imageSpacing;
     if (canGoForward) {
-      scrollController.animateTo(
+      unawaited(scrollController.animateTo(
         scrollController.offset + scrollAmount,
         duration: widget.autoScrollDuration,
         curve: Curves.easeInOut,
-      );
+      ));
     } else {
-      scrollController.animateTo(
+      unawaited(scrollController.animateTo(
         0,
         duration: widget.autoScrollDuration,
         curve: Curves.easeInOut,
-      );
+      ));
     }
   }
 }
 
 class AutoScrollToggleButton extends StatefulWidget {
   const AutoScrollToggleButton({
-    super.key,
-    required this.isEnabled,
-    required this.onToggle,
+    required this.isEnabled, required this.onToggle, super.key,
   });
 
   final bool isEnabled;

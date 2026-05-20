@@ -12,9 +12,7 @@ import 'highlight_image_io.dart'
 /// - File paths (platform-specific, not supported on web)
 class HighlightImage extends StatelessWidget {
   const HighlightImage({
-    super.key,
-    required this.uri,
-    required this.fit,
+    required this.uri, required this.fit, super.key,
     this.onTap,
   });
 
@@ -45,10 +43,8 @@ class HighlightImage extends StatelessWidget {
         fit: fit,
         width: double.infinity,
         height: double.infinity,
-        loadingBuilder: (context, child, progress) =>
-            buildLoadingIndicator(context, child, progress),
-        errorBuilder: (context, error, stack) =>
-            buildErrorWidget(context, error, stack),
+        loadingBuilder: buildLoadingIndicator,
+        errorBuilder: buildErrorWidget,
       );
     }
 
@@ -58,8 +54,7 @@ class HighlightImage extends StatelessWidget {
         fit: fit,
         width: double.infinity,
         height: double.infinity,
-        errorBuilder: (context, error, stack) =>
-            buildErrorWidget(context, error, stack),
+        errorBuilder: buildErrorWidget,
       );
     }
 
@@ -75,7 +70,7 @@ class HighlightImage extends StatelessWidget {
     if (progress == null) return child;
 
     final theme = ShadTheme.of(context);
-    return Container(
+    return ColoredBox(
       color: theme.colorScheme.muted,
       child: Center(
         child: CircularProgressIndicator(
@@ -93,7 +88,7 @@ class HighlightImage extends StatelessWidget {
     StackTrace? stackTrace,
   ) {
     final theme = ShadTheme.of(context);
-    return Container(
+    return ColoredBox(
       color: theme.colorScheme.muted,
       child: Center(
         child: Icon(

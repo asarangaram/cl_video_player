@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cl_video_player/cl_video_player.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -71,7 +73,7 @@ class VideoPlayerTestScreenState extends State<VideoPlayerTestScreen>
 
     // Set default comments
     _commentControllers[0].text =
-        'NativeVideoPlayer uses Flutter\'s video_player package.\n'
+        "NativeVideoPlayer uses Flutter's video_player package.\n"
         'Works on all platforms.\n'
         'Set applySafariFirstFrameFix=true for Safari.';
     _commentControllers[1].text =
@@ -81,9 +83,9 @@ class VideoPlayerTestScreenState extends State<VideoPlayerTestScreen>
     _commentControllers[2].text =
         'HtmlVideoPlayer uses native HTML5 <video> element.\n'
         'Web-only implementation.\n'
-        'Bypasses Flutter\'s canvas rendering.';
+        "Bypasses Flutter's canvas rendering.";
     _commentControllers[3].text =
-        'OverlayVideoPlayer renders outside Flutter\'s widget tree.\n'
+        "OverlayVideoPlayer renders outside Flutter's widget tree.\n"
         'Web-only, best for Safari compatibility.\n'
         'Bypasses platform view positioning bugs.';
   }
@@ -162,37 +164,35 @@ class VideoPlayerTestScreenState extends State<VideoPlayerTestScreen>
         case 0:
           player = NativeVideoPlayer(applySafariFirstFrameFix: !kIsWeb);
           _nativePlayer = player;
-          break;
         case 1:
           player = MediaKitVideoPlayer();
           _mediaKitPlayer = player;
-          break;
         case 2:
           if (!kIsWeb) {
-            state.error = 'HtmlVideoPlayer is web-only';
-            state.isLoading = false;
+            state
+              ..error = 'HtmlVideoPlayer is web-only'
+              ..isLoading = false;
             setState(() {});
             return;
           }
           player = HtmlVideoPlayer();
           _htmlPlayer = player;
-          break;
         case 3:
           if (!kIsWeb) {
-            state.error = 'OverlayVideoPlayer is web-only';
-            state.isLoading = false;
+            state
+              ..error = 'OverlayVideoPlayer is web-only'
+              ..isLoading = false;
             setState(() {});
             return;
           }
           player = OverlayVideoPlayer();
           _overlayPlayer = player;
-          break;
         default:
           return;
       }
 
       await player.initialize(
-        onPlayingChanged: (isPlaying) {
+        onPlayingChanged: ({required isPlaying}) {
           state.isPlaying = isPlaying;
           setState(() {});
         },
@@ -212,12 +212,14 @@ class VideoPlayerTestScreenState extends State<VideoPlayerTestScreen>
 
       await player.open(source);
 
-      state.isLoading = false;
-      state.isInitialized = true;
+      state
+        ..isLoading = false
+        ..isInitialized = true;
       setState(() {});
-    } catch (e) {
-      state.isLoading = false;
-      state.error = e.toString();
+    } on Object catch (e) {
+      state
+        ..isLoading = false
+        ..error = e.toString();
       setState(() {});
     }
   }
@@ -245,10 +247,11 @@ class VideoPlayerTestScreenState extends State<VideoPlayerTestScreen>
         bottom: TabBar(
           controller: _tabController,
           onTap: (index) {
-            // Initialize player for this tab if video is loaded but player isn't
+            // Initialize player for this tab if video is loaded but player
+            // isn't.
             final source = _currentSource;
             if (source.isNotEmpty && _getPlayerForTab(index) == null) {
-              _initializePlayerForTab(index, source);
+              unawaited(_initializePlayerForTab(index, source));
             }
           },
           tabs: const [
@@ -371,7 +374,6 @@ class VideoPlayerTestScreenState extends State<VideoPlayerTestScreen>
           const SizedBox(height: 16),
           // Comments text box
           Expanded(
-            flex: 1,
             child: TextField(
               controller: _commentControllers[tabIndex],
               maxLines: 5,
@@ -445,7 +447,7 @@ class VideoPlayerTestScreenState extends State<VideoPlayerTestScreen>
                           milliseconds:
                               (value * state.duration.inMilliseconds).toInt(),
                         );
-                        player.seekTo(position);
+                        unawaited(player.seekTo(position));
                       }
                     : null,
               ),
@@ -463,9 +465,9 @@ class VideoPlayerTestScreenState extends State<VideoPlayerTestScreen>
               onPressed: isEnabled
                   ? () {
                       if (state.isPlaying) {
-                        player.pause();
+                        unawaited(player.pause());
                       } else {
-                        player.play();
+                        unawaited(player.play());
                       }
                     }
                   : null,
@@ -479,7 +481,7 @@ class VideoPlayerTestScreenState extends State<VideoPlayerTestScreen>
                 onChanged: isEnabled
                     ? (value) {
                         state.volume = value;
-                        player.setVolume(value);
+                        unawaited(player.setVolume(value));
                         setState(() {});
                       }
                     : null,
@@ -558,7 +560,7 @@ class PlayerState {
   bool isPlaying = false;
   Duration position = Duration.zero;
   Duration duration = Duration.zero;
-  double volume = 1.0;
+  double volume = 1;
   String? error;
 
   void reset() {

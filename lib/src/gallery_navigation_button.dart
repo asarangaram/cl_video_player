@@ -4,9 +4,7 @@ enum NavigationDirection { left, right }
 
 class GalleryNavigationButton extends StatefulWidget {
   const GalleryNavigationButton({
-    super.key,
-    required this.direction,
-    required this.onPressed,
+    required this.direction, required this.onPressed, super.key,
     this.size = 56.0,
     this.iconSize = 28.0,
     this.normalOpacity = 0.6,
@@ -48,10 +46,10 @@ class GalleryNavigationButtonState extends State<GalleryNavigationButton> {
   @override
   Widget build(BuildContext context) {
     return Focus(
-      onFocusChange: handleFocusChange,
+      onFocusChange: (focused) => handleFocusChange(focused: focused),
       child: MouseRegion(
-        onEnter: (_) => handleHoverChange(true),
-        onExit: (_) => handleHoverChange(false),
+        onEnter: (_) => handleHoverChange(hovered: true),
+        onExit: (_) => handleHoverChange(hovered: false),
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: widget.onPressed,
@@ -90,11 +88,11 @@ class GalleryNavigationButtonState extends State<GalleryNavigationButton> {
     );
   }
 
-  void handleHoverChange(bool hovered) {
+  void handleHoverChange({required bool hovered}) {
     setState(() => isHovered = hovered);
   }
 
-  void handleFocusChange(bool focused) {
+  void handleFocusChange({required bool focused}) {
     setState(() => isFocused = focused);
   }
 }

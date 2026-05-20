@@ -2,14 +2,13 @@ import 'package:cl_video_player/cl_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class FakeFilePicker implements FilePickerAdapter {
+class FakeFilePicker {
   FakeFilePicker(this.toReturn);
   final List<PickedMedia> toReturn;
   int callCount = 0;
   bool? lastAllowMultiple;
   Set<MediaKind>? lastAllowedKinds;
 
-  @override
   Future<List<PickedMedia>> pick({
     required bool allowMultiple,
     required Set<MediaKind> allowedKinds,
@@ -69,7 +68,7 @@ void main() {
 
       await tester.pumpWidget(host(MediaUploader(
         mode: MediaUploaderMode.single,
-        pickerAdapter: picker,
+        pickerAdapter: picker.pick,
         uploadCallback: (req) async => resultFor(req),
         statusCallback: (id) async => throw UnimplementedError(),
         onComplete: completed.add,
@@ -95,7 +94,7 @@ void main() {
 
       await tester.pumpWidget(host(MediaUploader(
         mode: MediaUploaderMode.single,
-        pickerAdapter: picker,
+        pickerAdapter: picker.pick,
         uploadCallback: (req) async => resultFor(
           req,
           status: MediaConversionStatus.failed,
@@ -130,7 +129,7 @@ void main() {
 
       await tester.pumpWidget(host(MediaUploader(
         mode: MediaUploaderMode.single,
-        pickerAdapter: picker,
+        pickerAdapter: picker.pick,
         uploadCallback: (req) async => resultFor(req),
         statusCallback: (id) async => throw UnimplementedError(),
         onComplete: completed.add,
@@ -149,7 +148,8 @@ void main() {
   });
 
   group('MediaUploader (multi)', () {
-    testWidgets('Done enabled only after all terminal; payload excludes failures',
+    testWidgets(
+        'Done enabled only after all terminal; payload excludes failures',
         (tester) async {
       final picker = FakeFilePicker([
         imagePick('a.png'),
@@ -160,7 +160,7 @@ void main() {
 
       await tester.pumpWidget(host(MediaUploader(
         mode: MediaUploaderMode.multi,
-        pickerAdapter: picker,
+        pickerAdapter: picker.pick,
         uploadCallback: (req) async {
           if (req.filename == 'b.png') {
             return resultFor(

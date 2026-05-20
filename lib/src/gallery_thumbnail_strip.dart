@@ -5,10 +5,10 @@ import 'video_url_utils.dart';
 
 class GalleryThumbnailStrip extends StatelessWidget {
   const GalleryThumbnailStrip({
-    super.key,
     required this.items,
     required this.selectedIndex,
     required this.onThumbnailTap,
+    super.key,
     this.thumbnailHeight = 50.0,
     this.thumbnailWidth = 70.0,
     this.spacing = 8.0,

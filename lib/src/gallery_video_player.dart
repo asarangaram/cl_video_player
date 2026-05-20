@@ -1,10 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import 'video_player_interface.dart';
 import 'video_url_utils.dart';
 
-typedef OnPlayStateChanged = void Function(String videoId, bool isPlaying);
+typedef OnPlayStateChanged = void Function(
+  String videoId, {
+  required bool isPlaying,
+});
 typedef VideoPlayerFactory = VideoPlayerInterface Function();
 
 /// Gallery video player that shows poster by default.
@@ -15,12 +20,12 @@ typedef VideoPlayerFactory = VideoPlayerInterface Function();
 /// - When deactivated or scrolled out of view: Resets to poster
 class GalleryVideoPlayer extends StatefulWidget {
   const GalleryVideoPlayer({
-    super.key,
     required this.videoUrl,
     required this.videoId,
     required this.onPlayStateChanged,
     required this.isActiveVideo,
     required this.playerFactory,
+    super.key,
     this.autoLoadVideo = false,
   });
 
@@ -94,7 +99,7 @@ class GalleryVideoPlayerState extends State<GalleryVideoPlayer> {
     return VisibilityDetector(
       key: Key('video_${widget.videoId}'),
       onVisibilityChanged: handleVisibilityChanged,
-      child: Container(
+      child: ColoredBox(
         color: Colors.black,
         child: buildPosterWithPlayButton(),
       ),
@@ -152,7 +157,7 @@ class GalleryVideoPlayerState extends State<GalleryVideoPlayer> {
     setState(() {
       showInPlaceVideo = true;
     });
-    initializePlayer();
+    unawaited(initializePlayer());
   }
 
   Future<void> initializePlayer() async {
@@ -161,9 +166,9 @@ class GalleryVideoPlayerState extends State<GalleryVideoPlayer> {
     if (mounted) setState(() {});
 
     await player!.initialize(
-      onPlayingChanged: (playing) {
-        if (mounted && playing != isPlaying) {
-          setState(() => isPlaying = playing);
+      onPlayingChanged: ({required isPlaying}) {
+        if (mounted && isPlaying != this.isPlaying) {
+          setState(() => this.isPlaying = isPlaying);
         }
       },
       onError: (error) {
@@ -177,13 +182,13 @@ class GalleryVideoPlayerState extends State<GalleryVideoPlayer> {
     );
 
     try {
-      await player!.open(widget.videoUrl, autoPlay: true);
+      await player!.open(widget.videoUrl);
 
       if (mounted) {
         setState(() => isInitialized = true);
-        widget.onPlayStateChanged(widget.videoId, true);
+        widget.onPlayStateChanged(widget.videoId, isPlaying: true);
       }
-    } catch (e) {
+    } on Object {
       if (mounted) {
         setState(() {
           hasError = true;
@@ -195,17 +200,16 @@ class GalleryVideoPlayerState extends State<GalleryVideoPlayer> {
 
   Widget buildVideoContent() {
     if (player == null) {
-      return Container(
+      return const ColoredBox(
         color: Colors.black,
-        child: const Center(
+        child: Center(
           child: CircularProgressIndicator(color: Colors.white),
         ),
       );
     }
 
     return player!.buildVideoWidget(
-      fit: BoxFit.contain,
-      showControls: false,
+      
     );
   }
 
@@ -228,6 +232,6 @@ class GalleryVideoPlayerState extends State<GalleryVideoPlayer> {
       isPlaying = false;
       hasError = false;
     });
-    widget.onPlayStateChanged(widget.videoId, false);
+    widget.onPlayStateChanged(widget.videoId, isPlaying: false);
   }
 }
