@@ -1,5 +1,9 @@
-include: package:flutter_lints/flutter.yaml
+include: package:very_good_analysis/analysis_options.yaml
 
 linter:
   rules:
-    avoid_print: false
+    # Documentation comments on public APIs are not enforced.
+    public_member_api_docs: false
+    # Use relative imports within the same package (prefer_relative_imports is
+    # left enabled by very_good_analysis to enforce this).
+    always_use_package_imports: false

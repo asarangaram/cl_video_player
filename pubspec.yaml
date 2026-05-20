@@ -4,32 +4,32 @@ version: 0.1.0
 publish_to: none
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ^3.11.0
   flutter: ">=3.10.0"
 
 dependencies:
   flutter:
     sdk: flutter
   # For NativeVideoPlayer
-  video_player: ^2.9.3
+  video_player: 2.11.1
   # For MediaKitVideoPlayer
-  media_kit: ^1.2.6
-  media_kit_video: ^2.0.1
-  media_kit_libs_video: ^1.0.7
+  media_kit: 1.2.6
+  media_kit_video: 2.0.1
+  media_kit_libs_video: 1.0.7
   # For HtmlVideoPlayer and OverlayVideoPlayer (web only)
-  web: ^1.1.0
+  web: 1.1.1
   # For gallery video player visibility tracking
-  visibility_detector: ^0.4.0+2
+  visibility_detector: 0.4.0+2
   # UI components
-  shadcn_ui: ^0.54.0
+  shadcn_ui: 0.54.0
   # State management
-  flutter_riverpod: ^2.6.1
+  flutter_riverpod: 2.6.1
   # File picking for the uploader module
-  file_picker: ^8.0.0
+  file_picker: 8.3.7
   # @immutable
-  meta: ^1.10.0
+  meta: 1.17.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  very_good_analysis: 10.2.0
