@@ -118,12 +118,10 @@ class MediaKitVideoPlayer implements VideoPlayerInterface {
     if (_controller == null) {
       return const SizedBox.shrink();
     }
-    final controls =
-        showControls ? AdaptiveVideoControls as VideoControlsBuilder? : null;
     return Video(
       controller: _controller!,
       fit: fit,
-      controls: controls,
+      controls: showControls ? AdaptiveVideoControls : null,
     );
   }
 
