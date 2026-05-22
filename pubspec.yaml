@@ -14,10 +14,6 @@ dependencies:
     sdk: flutter
   # State management
   flutter_riverpod: 2.6.1
-  # For MediaKitVideoPlayer
-  media_kit: 1.2.6
-  media_kit_libs_video: 1.0.7
-  media_kit_video: 2.0.1
   # @immutable
   meta: 1.17.0
   # UI components

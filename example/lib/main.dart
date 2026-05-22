@@ -4,11 +4,9 @@ import 'package:cl_video_player/cl_video_player.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:media_kit/media_kit.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  MediaKit.ensureInitialized();
   runApp(const VideoPlayerExampleApp());
 }
 
@@ -165,8 +163,11 @@ class VideoPlayerTestScreenState extends State<VideoPlayerTestScreen>
           player = NativeVideoPlayer(applySafariFirstFrameFix: !kIsWeb);
           _nativePlayer = player;
         case 1:
-          player = MediaKitVideoPlayer();
-          _mediaKitPlayer = player;
+          state
+            ..error = 'MediaKitVideoPlayer has been removed from this package'
+            ..isLoading = false;
+          setState(() {});
+          return;
         case 2:
           if (!kIsWeb) {
             state

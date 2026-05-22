@@ -2,7 +2,6 @@
 ///
 /// Players:
 /// - `NativeVideoPlayer` - Flutter's official video_player package
-/// - `MediaKitVideoPlayer` - media_kit for texture-based rendering
 /// - `HtmlVideoPlayer` - HTML5 video element (web only)
 /// - `OverlayVideoPlayer` - Overlay video outside Flutter (web only)
 ///
@@ -33,7 +32,6 @@ export 'src/video_player_html_stub.dart'
     if (dart.library.js_interop) 'src/video_player_html.dart';
 // Players
 export 'src/video_player_interface.dart';
-export 'src/video_player_media_kit.dart';
 export 'src/video_player_native.dart';
 export 'src/video_player_overlay_stub.dart'
     if (dart.library.js_interop) 'src/video_player_overlay.dart';

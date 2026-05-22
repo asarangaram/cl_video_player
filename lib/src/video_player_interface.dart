@@ -15,7 +15,7 @@ typedef ErrorCallback = void Function(Object error);
 /// Abstract interface for video player operations.
 ///
 /// This interface abstracts the differences between video player packages
-/// (media_kit, video_player, HTML5 video), allowing runtime switching
+/// (video_player, HTML5 video), allowing runtime switching
 /// between implementations.
 abstract interface class VideoPlayerInterface {
   /// Initialize the player with optional callbacks for state changes.
