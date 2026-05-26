@@ -11,7 +11,7 @@ import '../video_player_interface.dart';
 /// The overlay content for [PopOverVideoPlayer].
 ///
 /// On desktop/tablet: positioned in the bottom-right corner.
-/// On mobile (width < 600): positioned at bottom-center with uniform padding.
+/// On mobile: positioned at bottom-center with uniform padding.
 ///
 /// The close button is placed above the video area to avoid z-index
 /// conflicts with the video player widget.
@@ -19,11 +19,22 @@ class PopOverVideoPlayerOverlay extends StatefulWidget {
   const PopOverVideoPlayerOverlay({
     required this.videoUrl, required this.onClose, super.key,
     this.playerFactory,
+    this.isMobile,
   });
+
+  /// Width at or below which the overlay falls back to its mobile layout
+  /// when no [isMobile] resolver is supplied. Keeps the package usable
+  /// standalone, without a dependency on the host's breakpoint constants.
+  static const double defaultMobileBreakpoint = 600;
 
   final String videoUrl;
   final VideoPlayerFactory? playerFactory;
   final VoidCallback onClose;
+
+  /// Resolves whether to use the mobile layout for the current context.
+  /// The host injects its workspace breakpoint here; when null the overlay
+  /// falls back to [defaultMobileBreakpoint].
+  final bool Function(BuildContext context)? isMobile;
 
   @override
   State<PopOverVideoPlayerOverlay> createState() =>
@@ -90,7 +101,8 @@ class PopOverVideoPlayerOverlayState
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 600;
+    final isMobile = widget.isMobile?.call(context) ??
+        screenWidth < PopOverVideoPlayerOverlay.defaultMobileBreakpoint;
 
     // On mobile: bottom-center with uniform 12px padding
     // On desktop: bottom-right with 16px padding

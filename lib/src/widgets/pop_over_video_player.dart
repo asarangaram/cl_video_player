@@ -15,6 +15,7 @@ class PopOverVideoPlayer extends StatelessWidget {
     this.videoUrl,
     this.playerFactory,
     this.size = 20.0,
+    this.isMobile,
   });
 
   /// The video URL to play in the popup. If null, button is disabled.
@@ -25,6 +26,11 @@ class PopOverVideoPlayer extends StatelessWidget {
 
   /// Icon size.
   final double size;
+
+  /// Resolves whether the popover should use its mobile layout. Forwarded
+  /// to [PopOverVideoPlayerOverlay]; when null it falls back to the
+  /// overlay's default breakpoint.
+  final bool Function(BuildContext context)? isMobile;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +57,7 @@ class PopOverVideoPlayer extends StatelessWidget {
         videoUrl: videoUrl!,
         playerFactory: playerFactory,
         onClose: () => entry.remove(),
+        isMobile: isMobile,
       ),
     );
 
