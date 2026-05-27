@@ -65,8 +65,7 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
   Widget buildVideoWidget({
     BoxFit fit = BoxFit.contain,
     bool showControls = false,
-  }) =>
-      const SizedBox.shrink();
+  }) => const SizedBox.shrink();
 
   @override
   void dispose() {}
@@ -81,7 +80,9 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
 /// Stub placeholder widget for non-web platforms.
 class OverlayVideoPlaceholder extends StatelessWidget {
   const OverlayVideoPlaceholder({
-    required this.player, required this.onPositionChanged, super.key,
+    required this.player,
+    required this.onPositionChanged,
+    super.key,
   });
 
   final OverlayVideoPlayer player;

@@ -28,8 +28,10 @@ class VideoUrlUtils {
 
     for (final ext in _videoExtensions) {
       if (lowerUrl.endsWith(ext)) {
-        final base =
-            urlWithoutQuery.substring(0, urlWithoutQuery.length - ext.length);
+        final base = urlWithoutQuery.substring(
+          0,
+          urlWithoutQuery.length - ext.length,
+        );
         return '$base.webp';
       }
     }
@@ -48,8 +50,10 @@ class VideoUrlUtils {
 
     for (final ext in _videoExtensions) {
       if (lowerUrl.endsWith(ext)) {
-        final base =
-            urlWithoutQuery.substring(0, urlWithoutQuery.length - ext.length);
+        final base = urlWithoutQuery.substring(
+          0,
+          urlWithoutQuery.length - ext.length,
+        );
         return '${base}_poster.webp';
       }
     }

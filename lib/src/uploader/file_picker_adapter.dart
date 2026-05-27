@@ -21,10 +21,11 @@ class PickedMedia {
 
 /// Abstraction over the `file_picker` package so widget tests can substitute
 /// a fake.
-typedef FilePickerAdapter = Future<List<PickedMedia>> Function({
-  required bool allowMultiple,
-  required Set<MediaKind> allowedKinds,
-});
+typedef FilePickerAdapter =
+    Future<List<PickedMedia>> Function({
+      required bool allowMultiple,
+      required Set<MediaKind> allowedKinds,
+    });
 
 /// Production adapter — wraps `FilePicker.platform`.
 Future<List<PickedMedia>> defaultFilePicker({

@@ -34,28 +34,34 @@ class MediaKitVideoPlayer implements VideoPlayerInterface {
     DurationCallback? onDurationChanged,
     ErrorCallback? onError,
   }) async {
-    _player = Player(
-      
-    );
+    _player = Player();
     _controller = VideoController(_player!);
 
     _subscriptions
-      ..add(_player!.stream.playing.listen((playing) {
-        _isPlaying = playing;
-        onPlayingChanged?.call(isPlaying: playing);
-      }))
-      ..add(_player!.stream.position.listen((pos) {
-        _position = pos;
-        onPositionChanged?.call(pos);
-      }))
-      ..add(_player!.stream.duration.listen((dur) {
-        _duration = dur;
-        onDurationChanged?.call(dur);
-      }))
-      ..add(_player!.stream.error.listen((error) {
-        _hasError = true;
-        onError?.call(error);
-      }));
+      ..add(
+        _player!.stream.playing.listen((playing) {
+          _isPlaying = playing;
+          onPlayingChanged?.call(isPlaying: playing);
+        }),
+      )
+      ..add(
+        _player!.stream.position.listen((pos) {
+          _position = pos;
+          onPositionChanged?.call(pos);
+        }),
+      )
+      ..add(
+        _player!.stream.duration.listen((dur) {
+          _duration = dur;
+          onDurationChanged?.call(dur);
+        }),
+      )
+      ..add(
+        _player!.stream.error.listen((error) {
+          _hasError = true;
+          onError?.call(error);
+        }),
+      );
   }
 
   @override

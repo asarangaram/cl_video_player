@@ -4,7 +4,9 @@ enum NavigationDirection { left, right }
 
 class GalleryNavigationButton extends StatefulWidget {
   const GalleryNavigationButton({
-    required this.direction, required this.onPressed, super.key,
+    required this.direction,
+    required this.onPressed,
+    super.key,
     this.size = 56.0,
     this.iconSize = 28.0,
     this.normalOpacity = 0.6,

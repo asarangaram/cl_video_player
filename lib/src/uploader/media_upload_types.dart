@@ -96,8 +96,7 @@ class MediaUploadResult {
       other.error == error;
 
   @override
-  int get hashCode =>
-      Object.hash(id, uuid, kind, status, downloadUrl, error);
+  int get hashCode => Object.hash(id, uuid, kind, status, downloadUrl, error);
 
   @override
   String toString() =>
@@ -110,8 +109,7 @@ typedef MediaUploadCallback =
     Future<MediaUploadResult> Function(MediaUploadRequest req);
 
 /// Polls server-side conversion status (host app injects this).
-typedef MediaStatusCallback =
-    Future<MediaUploadResult> Function(int id);
+typedef MediaStatusCallback = Future<MediaUploadResult> Function(int id);
 
 /// Called once at the end with the successfully completed results.
 typedef MediaUploadCompleteCallback =

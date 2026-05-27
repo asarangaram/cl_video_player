@@ -131,7 +131,8 @@ class UploadDialogSingleState extends State<UploadDialogSingle> {
     _closed = true;
     _pollTimer?.cancel();
     _timeoutTimer?.cancel();
-    final base = _outcome ??
+    final base =
+        _outcome ??
         MediaUploadResult(
           id: -1,
           uuid: '',

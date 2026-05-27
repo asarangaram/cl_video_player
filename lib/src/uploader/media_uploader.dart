@@ -9,10 +9,11 @@ import 'upload_dialog_single.dart';
 ///
 /// The builder is given an [openPicker] callback to wire to whatever
 /// tappable widget the host renders (button, icon, card, …).
-typedef MediaUploaderTriggerBuilder = Widget Function(
-  BuildContext context,
-  VoidCallback openPicker,
-);
+typedef MediaUploaderTriggerBuilder =
+    Widget Function(
+      BuildContext context,
+      VoidCallback openPicker,
+    );
 
 /// SDK-agnostic media uploader entry point.
 ///

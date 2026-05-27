@@ -75,8 +75,11 @@ class GalleryThumbnailStrip extends StatelessWidget {
                     return Container(
                       color: Colors.grey[800],
                       child: const Center(
-                        child: Icon(Icons.broken_image,
-                            color: Colors.white38, size: 20),
+                        child: Icon(
+                          Icons.broken_image,
+                          color: Colors.white38,
+                          size: 20,
+                        ),
                       ),
                     );
                   },

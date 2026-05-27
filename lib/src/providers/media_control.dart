@@ -69,5 +69,5 @@ class MediaControlNotifier extends Notifier<MediaControlState> {
 /// Provides both audio mute and playback pause controls.
 final mediaControlProvider =
     NotifierProvider<MediaControlNotifier, MediaControlState>(
-  MediaControlNotifier.new,
-);
+      MediaControlNotifier.new,
+    );

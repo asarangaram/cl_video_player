@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import 'highlight_image_io.dart'
-    if (dart.library.html) 'highlight_image_web.dart' as platform;
+    if (dart.library.html) 'highlight_image_web.dart'
+    as platform;
 
 /// Displays an image from network, asset, or file path.
 ///
@@ -12,7 +13,9 @@ import 'highlight_image_io.dart'
 /// - File paths (platform-specific, not supported on web)
 class HighlightImage extends StatelessWidget {
   const HighlightImage({
-    required this.uri, required this.fit, super.key,
+    required this.uri,
+    required this.fit,
+    super.key,
     this.onTap,
   });
 

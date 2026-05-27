@@ -73,7 +73,8 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
         ..id = _containerId!
         ..style.position = 'fixed'
         ..style.zIndex = '1000'
-        ..style.pointerEvents = 'none' // Let clicks pass through to Flutter
+        ..style.pointerEvents =
+            'none' // Let clicks pass through to Flutter
         ..style.overflow = 'hidden'
         ..style.backgroundColor = 'black';
 
@@ -82,7 +83,8 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
         ..style.width = '100%'
         ..style.height = '100%'
         ..style.objectFit = 'contain'
-        ..style.pointerEvents = 'auto' // Video itself captures clicks
+        ..style.pointerEvents =
+            'auto' // Video itself captures clicks
         ..setAttribute('playsinline', 'true')
         ..setAttribute('webkit-playsinline', 'true')
         ..setAttribute('x-webkit-airplay', 'allow')
@@ -90,7 +92,8 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
         ..setAttribute('controls', 'true')
         ..setAttribute('preload', 'auto') // Start loading immediately
         ..setAttribute('crossorigin', 'anonymous') // Required for CORS
-        ..muted = true // Muted for autoplay compliance on Safari
+        ..muted =
+            true // Muted for autoplay compliance on Safari
         ..src = url;
 
       _containerElement!.appendChild(_videoElement!);
@@ -125,53 +128,60 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
 
     video
       ..addEventListener(
-          'play',
-          ((web.Event event) {
-            _log('EVENT: play');
-            if (!_lastPlayingState) {
-              _lastPlayingState = true;
-              _onPlayingChanged?.call(isPlaying: true);
-            }
-          }).toJS)
+        'play',
+        ((web.Event event) {
+          _log('EVENT: play');
+          if (!_lastPlayingState) {
+            _lastPlayingState = true;
+            _onPlayingChanged?.call(isPlaying: true);
+          }
+        }).toJS,
+      )
       ..addEventListener(
-          'pause',
-          ((web.Event event) {
-            _log('EVENT: pause');
-            if (_lastPlayingState) {
-              _lastPlayingState = false;
-              _onPlayingChanged?.call(isPlaying: false);
-            }
-          }).toJS)
+        'pause',
+        ((web.Event event) {
+          _log('EVENT: pause');
+          if (_lastPlayingState) {
+            _lastPlayingState = false;
+            _onPlayingChanged?.call(isPlaying: false);
+          }
+        }).toJS,
+      )
       ..addEventListener(
-          'playing',
-          ((web.Event event) {
-            _log('EVENT: playing');
-          }).toJS)
+        'playing',
+        ((web.Event event) {
+          _log('EVENT: playing');
+        }).toJS,
+      )
       ..addEventListener(
-          'loadedmetadata',
-          ((web.Event event) {
-            _log(
-              'EVENT: loadedmetadata - '
-              '${video.videoWidth}x${video.videoHeight}',
+        'loadedmetadata',
+        ((web.Event event) {
+          _log(
+            'EVENT: loadedmetadata - '
+            '${video.videoWidth}x${video.videoHeight}',
+          );
+        }).toJS,
+      )
+      ..addEventListener(
+        'durationchange',
+        ((web.Event event) {
+          final dur = video.duration;
+          if (!dur.isNaN && dur.isFinite) {
+            _onDurationChanged?.call(
+              Duration(milliseconds: (dur * 1000).toInt()),
             );
-          }).toJS)
+          }
+        }).toJS,
+      )
       ..addEventListener(
-          'durationchange',
-          ((web.Event event) {
-            final dur = video.duration;
-            if (!dur.isNaN && dur.isFinite) {
-              _onDurationChanged
-                  ?.call(Duration(milliseconds: (dur * 1000).toInt()));
-            }
-          }).toJS)
-      ..addEventListener(
-          'error',
-          ((web.Event event) {
-            final error = video.error;
-            _log('EVENT: error - ${error?.message}');
-            _hasError = true;
-            _onError?.call('Video error: ${error?.message}');
-          }).toJS);
+        'error',
+        ((web.Event event) {
+          final error = video.error;
+          _log('EVENT: error - ${error?.message}');
+          _hasError = true;
+          _onError?.call('Video error: ${error?.message}');
+        }).toJS,
+      );
   }
 
   Future<void> _waitForLoad() async {
@@ -182,19 +192,21 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
 
     video
       ..addEventListener(
-          'canplay',
-          ((web.Event event) {
-            if (!completer.isCompleted) {
-              completer.complete();
-            }
-          }).toJS)
+        'canplay',
+        ((web.Event event) {
+          if (!completer.isCompleted) {
+            completer.complete();
+          }
+        }).toJS,
+      )
       ..addEventListener(
-          'error',
-          ((web.Event event) {
-            if (!completer.isCompleted) {
-              completer.completeError('Failed to load video');
-            }
-          }).toJS)
+        'error',
+        ((web.Event event) {
+          if (!completer.isCompleted) {
+            completer.completeError('Failed to load video');
+          }
+        }).toJS,
+      )
       ..load();
 
     await completer.future.timeout(
@@ -225,7 +237,8 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
     final viewportWidth = web.window.innerWidth;
     final viewportHeight = web.window.innerHeight;
 
-    final isVisible = rect.right > 0 &&
+    final isVisible =
+        rect.right > 0 &&
         rect.bottom > 0 &&
         rect.left < viewportWidth &&
         rect.top < viewportHeight;
@@ -262,12 +275,14 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
     final position = renderBox.localToGlobal(Offset.zero);
     final size = renderBox.size;
 
-    updatePosition(Rect.fromLTWH(
-      position.dx,
-      position.dy,
-      size.width,
-      size.height,
-    ));
+    updatePosition(
+      Rect.fromLTWH(
+        position.dx,
+        position.dy,
+        size.width,
+        size.height,
+      ),
+    );
   }
 
   @override
@@ -284,12 +299,14 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
       _log('play() succeeded (muted)');
 
       // Try to unmute after a short delay
-      unawaited(Future.delayed(const Duration(milliseconds: 500), () {
-        if (!video.paused) {
-          _log('Attempting to unmute...');
-          video.muted = false;
-        }
-      }));
+      unawaited(
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (!video.paused) {
+            _log('Attempting to unmute...');
+            video.muted = false;
+          }
+        }),
+      );
     } on Object catch (e) {
       _log('play() failed even muted: $e');
     }
@@ -386,7 +403,9 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
 /// Placeholder widget that tracks its position and updates the overlay video.
 class OverlayVideoPlaceholder extends StatefulWidget {
   const OverlayVideoPlaceholder({
-    required this.player, required this.onPositionChanged, super.key,
+    required this.player,
+    required this.onPositionChanged,
+    super.key,
   });
 
   final OverlayVideoPlayer player;
@@ -427,12 +446,14 @@ class OverlayVideoPlaceholderState extends State<OverlayVideoPlaceholder> {
     final position = renderBox.localToGlobal(Offset.zero);
     final size = renderBox.size;
 
-    widget.onPositionChanged(Rect.fromLTWH(
-      position.dx,
-      position.dy,
-      size.width,
-      size.height,
-    ));
+    widget.onPositionChanged(
+      Rect.fromLTWH(
+        position.dx,
+        position.dy,
+        size.width,
+        size.height,
+      ),
+    );
   }
 
   @override

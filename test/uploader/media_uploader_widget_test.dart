@@ -22,25 +22,84 @@ class FakeFilePicker {
 
 // 1x1 transparent PNG.
 const _tinyPng = <int>[
-  0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
-  0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
-  0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
-  0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
-  0x89, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x44, 0x41,
-  0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00,
-  0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00,
-  0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
-  0x42, 0x60, 0x82,
+  0x89,
+  0x50,
+  0x4E,
+  0x47,
+  0x0D,
+  0x0A,
+  0x1A,
+  0x0A,
+  0x00,
+  0x00,
+  0x00,
+  0x0D,
+  0x49,
+  0x48,
+  0x44,
+  0x52,
+  0x00,
+  0x00,
+  0x00,
+  0x01,
+  0x00,
+  0x00,
+  0x00,
+  0x01,
+  0x08,
+  0x06,
+  0x00,
+  0x00,
+  0x00,
+  0x1F,
+  0x15,
+  0xC4,
+  0x89,
+  0x00,
+  0x00,
+  0x00,
+  0x0D,
+  0x49,
+  0x44,
+  0x41,
+  0x54,
+  0x78,
+  0x9C,
+  0x63,
+  0x00,
+  0x01,
+  0x00,
+  0x00,
+  0x05,
+  0x00,
+  0x01,
+  0x0D,
+  0x0A,
+  0x2D,
+  0xB4,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x49,
+  0x45,
+  0x4E,
+  0x44,
+  0xAE,
+  0x42,
+  0x60,
+  0x82,
 ];
 
 PickedMedia imagePick(String name) => PickedMedia(
-      bytes: _tinyPng,
-      filename: name,
-      kind: MediaKind.image,
-      mimeType: 'image/png',
-    );
+  bytes: _tinyPng,
+  filename: name,
+  kind: MediaKind.image,
+  mimeType: 'image/png',
+);
 
-MediaUploadResult resultFor(MediaUploadRequest req, {
+MediaUploadResult resultFor(
+  MediaUploadRequest req, {
   MediaConversionStatus status = MediaConversionStatus.completed,
   String? error,
   int id = 1,
@@ -56,27 +115,30 @@ MediaUploadResult resultFor(MediaUploadRequest req, {
 }
 
 Widget host(MediaUploader uploader) => MaterialApp(
-      home: Scaffold(body: Center(child: uploader)),
-    );
+  home: Scaffold(body: Center(child: uploader)),
+);
 
 void main() {
   group('MediaUploader (single)', () {
-    testWidgets('happy path: callback fires with one result',
-        (tester) async {
+    testWidgets('happy path: callback fires with one result', (tester) async {
       final picker = FakeFilePicker([imagePick('a.png')]);
       final completed = <List<MediaUploadResult>>[];
 
-      await tester.pumpWidget(host(MediaUploader(
-        mode: MediaUploaderMode.single,
-        pickerAdapter: picker.pick,
-        uploadCallback: (req) async => resultFor(req),
-        statusCallback: (id) async => throw UnimplementedError(),
-        onComplete: completed.add,
-        triggerBuilder: (_, openPicker) => ElevatedButton(
-          onPressed: openPicker,
-          child: const Text('Upload'),
+      await tester.pumpWidget(
+        host(
+          MediaUploader(
+            mode: MediaUploaderMode.single,
+            pickerAdapter: picker.pick,
+            uploadCallback: (req) async => resultFor(req),
+            statusCallback: (id) async => throw UnimplementedError(),
+            onComplete: completed.add,
+            triggerBuilder: (_, openPicker) => ElevatedButton(
+              onPressed: openPicker,
+              child: const Text('Upload'),
+            ),
+          ),
         ),
-      )));
+      );
 
       await tester.tap(find.text('Upload'));
       await tester.pumpAndSettle();
@@ -92,21 +154,25 @@ void main() {
       final picker = FakeFilePicker([imagePick('a.png')]);
       final completed = <List<MediaUploadResult>>[];
 
-      await tester.pumpWidget(host(MediaUploader(
-        mode: MediaUploaderMode.single,
-        pickerAdapter: picker.pick,
-        uploadCallback: (req) async => resultFor(
-          req,
-          status: MediaConversionStatus.failed,
-          error: 'too big',
+      await tester.pumpWidget(
+        host(
+          MediaUploader(
+            mode: MediaUploaderMode.single,
+            pickerAdapter: picker.pick,
+            uploadCallback: (req) async => resultFor(
+              req,
+              status: MediaConversionStatus.failed,
+              error: 'too big',
+            ),
+            statusCallback: (id) async => throw UnimplementedError(),
+            onComplete: completed.add,
+            triggerBuilder: (_, openPicker) => ElevatedButton(
+              onPressed: openPicker,
+              child: const Text('Upload'),
+            ),
+          ),
         ),
-        statusCallback: (id) async => throw UnimplementedError(),
-        onComplete: completed.add,
-        triggerBuilder: (_, openPicker) => ElevatedButton(
-          onPressed: openPicker,
-          child: const Text('Upload'),
-        ),
-      )));
+      );
 
       await tester.tap(find.text('Upload'));
       // Allow upload to fail and the dialog to close.
@@ -122,22 +188,27 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 5));
     });
 
-    testWidgets('user cancel via empty picker: no dialog, no callback',
-        (tester) async {
+    testWidgets('user cancel via empty picker: no dialog, no callback', (
+      tester,
+    ) async {
       final picker = FakeFilePicker(const []);
       final completed = <List<MediaUploadResult>>[];
 
-      await tester.pumpWidget(host(MediaUploader(
-        mode: MediaUploaderMode.single,
-        pickerAdapter: picker.pick,
-        uploadCallback: (req) async => resultFor(req),
-        statusCallback: (id) async => throw UnimplementedError(),
-        onComplete: completed.add,
-        triggerBuilder: (_, openPicker) => ElevatedButton(
-          onPressed: openPicker,
-          child: const Text('Upload'),
+      await tester.pumpWidget(
+        host(
+          MediaUploader(
+            mode: MediaUploaderMode.single,
+            pickerAdapter: picker.pick,
+            uploadCallback: (req) async => resultFor(req),
+            statusCallback: (id) async => throw UnimplementedError(),
+            onComplete: completed.add,
+            triggerBuilder: (_, openPicker) => ElevatedButton(
+              onPressed: openPicker,
+              child: const Text('Upload'),
+            ),
+          ),
         ),
-      )));
+      );
 
       await tester.tap(find.text('Upload'));
       await tester.pumpAndSettle();
@@ -149,52 +220,57 @@ void main() {
 
   group('MediaUploader (multi)', () {
     testWidgets(
-        'Done enabled only after all terminal; payload excludes failures',
-        (tester) async {
-      final picker = FakeFilePicker([
-        imagePick('a.png'),
-        imagePick('b.png'),
-        imagePick('c.png'),
-      ]);
-      final completed = <List<MediaUploadResult>>[];
+      'Done enabled only after all terminal; payload excludes failures',
+      (tester) async {
+        final picker = FakeFilePicker([
+          imagePick('a.png'),
+          imagePick('b.png'),
+          imagePick('c.png'),
+        ]);
+        final completed = <List<MediaUploadResult>>[];
 
-      await tester.pumpWidget(host(MediaUploader(
-        mode: MediaUploaderMode.multi,
-        pickerAdapter: picker.pick,
-        uploadCallback: (req) async {
-          if (req.filename == 'b.png') {
-            return resultFor(
-              req,
-              status: MediaConversionStatus.failed,
-              error: 'rejected',
-              id: 2,
-            );
-          }
-          return resultFor(req);
-        },
-        statusCallback: (id) async => throw UnimplementedError(),
-        onComplete: completed.add,
-        triggerBuilder: (_, openPicker) => ElevatedButton(
-          onPressed: openPicker,
-          child: const Text('Upload'),
-        ),
-      )));
+        await tester.pumpWidget(
+          host(
+            MediaUploader(
+              mode: MediaUploaderMode.multi,
+              pickerAdapter: picker.pick,
+              uploadCallback: (req) async {
+                if (req.filename == 'b.png') {
+                  return resultFor(
+                    req,
+                    status: MediaConversionStatus.failed,
+                    error: 'rejected',
+                    id: 2,
+                  );
+                }
+                return resultFor(req);
+              },
+              statusCallback: (id) async => throw UnimplementedError(),
+              onComplete: completed.add,
+              triggerBuilder: (_, openPicker) => ElevatedButton(
+                onPressed: openPicker,
+                child: const Text('Upload'),
+              ),
+            ),
+          ),
+        );
 
-      await tester.tap(find.text('Upload'));
-      await tester.pumpAndSettle();
+        await tester.tap(find.text('Upload'));
+        await tester.pumpAndSettle();
 
-      expect(picker.lastAllowMultiple, isTrue);
-      expect(find.byType(FilledButton), findsOneWidget);
-      // Done is now enabled (all terminal, ≥1 success).
-      await tester.tap(find.byType(FilledButton));
-      await tester.pumpAndSettle();
+        expect(picker.lastAllowMultiple, isTrue);
+        expect(find.byType(FilledButton), findsOneWidget);
+        // Done is now enabled (all terminal, ≥1 success).
+        await tester.tap(find.byType(FilledButton));
+        await tester.pumpAndSettle();
 
-      expect(completed, hasLength(1));
-      // Only successful items are passed.
-      expect(completed.single.map((r) => r.uuid).toList(), [
-        'uuid-a.png',
-        'uuid-c.png',
-      ]);
-    });
+        expect(completed, hasLength(1));
+        // Only successful items are passed.
+        expect(completed.single.map((r) => r.uuid).toList(), [
+          'uuid-a.png',
+          'uuid-c.png',
+        ]);
+      },
+    );
   });
 }

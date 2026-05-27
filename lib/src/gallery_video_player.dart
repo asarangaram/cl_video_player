@@ -6,10 +6,11 @@ import 'package:visibility_detector/visibility_detector.dart';
 import 'video_player_interface.dart';
 import 'video_url_utils.dart';
 
-typedef OnPlayStateChanged = void Function(
-  String videoId, {
-  required bool isPlaying,
-});
+typedef OnPlayStateChanged =
+    void Function(
+      String videoId, {
+      required bool isPlaying,
+    });
 typedef VideoPlayerFactory = VideoPlayerInterface Function();
 
 /// Gallery video player that shows poster by default.
@@ -127,8 +128,11 @@ class GalleryVideoPlayerState extends State<GalleryVideoPlayer> {
               return Container(
                 color: Colors.grey[900],
                 child: const Center(
-                  child:
-                      Icon(Icons.videocam_off, color: Colors.white38, size: 48),
+                  child: Icon(
+                    Icons.videocam_off,
+                    color: Colors.white38,
+                    size: 48,
+                  ),
                 ),
               );
             },
@@ -208,9 +212,7 @@ class GalleryVideoPlayerState extends State<GalleryVideoPlayer> {
       );
     }
 
-    return player!.buildVideoWidget(
-      
-    );
+    return player!.buildVideoWidget();
   }
 
   void handleVisibilityChanged(VisibilityInfo info) {

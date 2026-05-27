@@ -42,7 +42,8 @@ class VideoPlayerTestScreenState extends State<VideoPlayerTestScreen>
   // Source selection
   bool _isNetworkSource = true;
   final TextEditingController _urlController = TextEditingController(
-    text: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+    text:
+        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
   );
   String? _selectedFilePath;
 

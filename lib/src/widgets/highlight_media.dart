@@ -28,7 +28,8 @@ import 'highlight_image.dart';
 /// what URL and factory to pass based on platform context.
 class HighlightMedia extends ConsumerStatefulWidget {
   const HighlightMedia({
-    required this.url, super.key,
+    required this.url,
+    super.key,
     this.playerFactory,
     this.fit = BoxFit.cover,
   });

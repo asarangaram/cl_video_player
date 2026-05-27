@@ -11,7 +11,9 @@ import 'gallery_video_player.dart';
 
 class GalleryMobile extends StatefulWidget {
   const GalleryMobile({
-    required this.items, required this.playerFactory, super.key,
+    required this.items,
+    required this.playerFactory,
+    super.key,
     this.onPdfDownload,
     this.height = 250.0,
     this.imageSpacing = 16.0,
@@ -181,7 +183,7 @@ class GalleryMobileState extends State<GalleryMobile> {
         child: CircularProgressIndicator(
           value: loadingProgress.expectedTotalBytes != null
               ? loadingProgress.cumulativeBytesLoaded /
-                  loadingProgress.expectedTotalBytes!
+                    loadingProgress.expectedTotalBytes!
               : null,
         ),
       ),
@@ -222,11 +224,13 @@ class GalleryMobileState extends State<GalleryMobile> {
 
   void handleThumbnailTap(int index) {
     if (autoScrollEnabled) disableAutoScrollOnInteraction();
-    unawaited(pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    ));
+    unawaited(
+      pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      ),
+    );
   }
 
   // Auto-scroll
@@ -254,17 +258,21 @@ class GalleryMobileState extends State<GalleryMobile> {
 
     final nextPage = currentPage + 1;
     if (nextPage < widget.items.length) {
-      unawaited(pageController.animateToPage(
-        nextPage,
-        duration: widget.autoScrollDuration,
-        curve: Curves.easeInOut,
-      ));
+      unawaited(
+        pageController.animateToPage(
+          nextPage,
+          duration: widget.autoScrollDuration,
+          curve: Curves.easeInOut,
+        ),
+      );
     } else {
-      unawaited(pageController.animateToPage(
-        0,
-        duration: widget.autoScrollDuration,
-        curve: Curves.easeInOut,
-      ));
+      unawaited(
+        pageController.animateToPage(
+          0,
+          duration: widget.autoScrollDuration,
+          curve: Curves.easeInOut,
+        ),
+      );
     }
   }
 }

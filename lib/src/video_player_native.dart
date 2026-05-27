@@ -14,7 +14,6 @@ import 'video_player_interface.dart';
 /// - Set [applySafariFirstFrameFix] to true to append #t=0.001 to URLs
 /// - This forces Safari to seek and render the first frame
 class NativeVideoPlayer implements VideoPlayerInterface {
-
   NativeVideoPlayer({this.applySafariFirstFrameFix = false});
   VideoPlayerController? _controller;
 

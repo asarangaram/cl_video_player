@@ -17,7 +17,9 @@ import '../video_player_interface.dart';
 /// conflicts with the video player widget.
 class PopOverVideoPlayerOverlay extends StatefulWidget {
   const PopOverVideoPlayerOverlay({
-    required this.videoUrl, required this.onClose, super.key,
+    required this.videoUrl,
+    required this.onClose,
+    super.key,
     this.playerFactory,
     this.isMobile,
   });
@@ -41,8 +43,7 @@ class PopOverVideoPlayerOverlay extends StatefulWidget {
       PopOverVideoPlayerOverlayState();
 }
 
-class PopOverVideoPlayerOverlayState
-    extends State<PopOverVideoPlayerOverlay> {
+class PopOverVideoPlayerOverlayState extends State<PopOverVideoPlayerOverlay> {
   VideoPlayerInterface? player;
   bool isInitialized = false;
   bool isPlaying = false;
@@ -101,7 +102,8 @@ class PopOverVideoPlayerOverlayState
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = widget.isMobile?.call(context) ??
+    final isMobile =
+        widget.isMobile?.call(context) ??
         screenWidth < PopOverVideoPlayerOverlay.defaultMobileBreakpoint;
 
     // On mobile: bottom-center with uniform 12px padding
@@ -248,10 +250,8 @@ class PopOverVideoPlayerOverlayState
   }
 
   String formatDuration(Duration duration) {
-    final minutes =
-        duration.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final seconds =
-        duration.inSeconds.remainder(60).toString().padLeft(2, '0');
+    final minutes = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
     return '$minutes:$seconds';
   }
 

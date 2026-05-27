@@ -65,8 +65,7 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
   Widget buildVideoWidget({
     BoxFit fit = BoxFit.contain,
     bool showControls = false,
-  }) =>
-      const SizedBox.shrink();
+  }) => const SizedBox.shrink();
 
   @override
   void dispose() {}

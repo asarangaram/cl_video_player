@@ -1,5 +1,6 @@
 import 'package:cl_video_player/cl_video_player.dart' show HighlightMedia;
-import 'package:cl_video_player/src/widgets/highlight_media.dart' show HighlightMedia;
+import 'package:cl_video_player/src/widgets/highlight_media.dart'
+    show HighlightMedia;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -61,7 +62,9 @@ class AudioControllerAudioMute extends ConsumerWidget {
 /// that changes background opacity.
 class OverlayIconButton extends StatefulWidget {
   const OverlayIconButton({
-    required this.icon, required this.onPressed, super.key,
+    required this.icon,
+    required this.onPressed,
+    super.key,
   });
 
   final Widget icon;

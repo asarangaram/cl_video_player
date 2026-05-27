@@ -89,10 +89,12 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
           _logVideoState();
 
           // Fix parent sizing after a short delay (once element is in DOM)
-          unawaited(Future.delayed(
-            const Duration(milliseconds: 100),
-            _fixPlatformViewSizing,
-          ));
+          unawaited(
+            Future.delayed(
+              const Duration(milliseconds: 100),
+              _fixPlatformViewSizing,
+            ),
+          );
 
           return _videoElement!;
         },
@@ -215,8 +217,9 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
           _log('EVENT: durationchange - ${video.duration}');
           final dur = video.duration;
           if (!dur.isNaN && dur.isFinite) {
-            _onDurationChanged
-                ?.call(Duration(milliseconds: (dur * 1000).toInt()));
+            _onDurationChanged?.call(
+              Duration(milliseconds: (dur * 1000).toInt()),
+            );
           }
         }).toJS,
       )

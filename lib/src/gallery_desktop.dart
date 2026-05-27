@@ -11,7 +11,9 @@ import 'gallery_video_player.dart';
 
 class GalleryDesktop extends StatefulWidget {
   const GalleryDesktop({
-    required this.items, required this.playerFactory, super.key,
+    required this.items,
+    required this.playerFactory,
+    super.key,
     this.onPdfDownload,
     this.height = 300.0,
     this.imageSpacing = 16.0,
@@ -137,7 +139,8 @@ class GalleryDesktopState extends State<GalleryDesktop> {
             size: widget.navigationButtonSize,
             onPressed: canNavigate
                 ? () => handleNavigationPress(
-                    isLeft ? -currentImageWidth : currentImageWidth)
+                    isLeft ? -currentImageWidth : currentImageWidth,
+                  )
                 : () {},
           ),
         ),
@@ -238,7 +241,7 @@ class GalleryDesktopState extends State<GalleryDesktop> {
         child: CircularProgressIndicator(
           value: loadingProgress.expectedTotalBytes != null
               ? loadingProgress.cumulativeBytesLoaded /
-                  loadingProgress.expectedTotalBytes!
+                    loadingProgress.expectedTotalBytes!
               : null,
         ),
       ),
@@ -302,11 +305,13 @@ class GalleryDesktopState extends State<GalleryDesktop> {
       0.0,
       scrollController.position.maxScrollExtent,
     );
-    unawaited(scrollController.animateTo(
-      targetOffset,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    ));
+    unawaited(
+      scrollController.animateTo(
+        targetOffset,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      ),
+    );
   }
 
   void disableAutoScrollOnInteraction() {
@@ -341,24 +346,30 @@ class GalleryDesktopState extends State<GalleryDesktop> {
 
     final scrollAmount = currentImageWidth + widget.imageSpacing;
     if (canGoForward) {
-      unawaited(scrollController.animateTo(
-        scrollController.offset + scrollAmount,
-        duration: widget.autoScrollDuration,
-        curve: Curves.easeInOut,
-      ));
+      unawaited(
+        scrollController.animateTo(
+          scrollController.offset + scrollAmount,
+          duration: widget.autoScrollDuration,
+          curve: Curves.easeInOut,
+        ),
+      );
     } else {
-      unawaited(scrollController.animateTo(
-        0,
-        duration: widget.autoScrollDuration,
-        curve: Curves.easeInOut,
-      ));
+      unawaited(
+        scrollController.animateTo(
+          0,
+          duration: widget.autoScrollDuration,
+          curve: Curves.easeInOut,
+        ),
+      );
     }
   }
 }
 
 class AutoScrollToggleButton extends StatefulWidget {
   const AutoScrollToggleButton({
-    required this.isEnabled, required this.onToggle, super.key,
+    required this.isEnabled,
+    required this.onToggle,
+    super.key,
   });
 
   final bool isEnabled;
