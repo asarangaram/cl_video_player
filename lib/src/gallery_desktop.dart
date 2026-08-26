@@ -305,12 +305,10 @@ class GalleryDesktopState extends State<GalleryDesktop> {
       0.0,
       scrollController.position.maxScrollExtent,
     );
-    unawaited(
-      scrollController.animateTo(
-        targetOffset,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      ),
+    scrollController.animateTo(
+      targetOffset,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
     );
   }
 
@@ -346,20 +344,16 @@ class GalleryDesktopState extends State<GalleryDesktop> {
 
     final scrollAmount = currentImageWidth + widget.imageSpacing;
     if (canGoForward) {
-      unawaited(
-        scrollController.animateTo(
-          scrollController.offset + scrollAmount,
-          duration: widget.autoScrollDuration,
-          curve: Curves.easeInOut,
-        ),
+      scrollController.animateTo(
+        scrollController.offset + scrollAmount,
+        duration: widget.autoScrollDuration,
+        curve: Curves.easeInOut,
       );
     } else {
-      unawaited(
-        scrollController.animateTo(
-          0,
-          duration: widget.autoScrollDuration,
-          curve: Curves.easeInOut,
-        ),
+      scrollController.animateTo(
+        0,
+        duration: widget.autoScrollDuration,
+        curve: Curves.easeInOut,
       );
     }
   }
