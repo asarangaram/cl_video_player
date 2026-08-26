@@ -60,13 +60,11 @@ class UploadDialogMultiState extends State<UploadDialogMulti> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final ctx = _itemKeys[index].currentContext;
       if (ctx == null) return;
-      unawaited(
-        Scrollable.ensureVisible(
-          ctx,
-          alignment: 0.5,
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.easeOut,
-        ),
+      Scrollable.ensureVisible(
+        ctx,
+        alignment: 0.5,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
       );
     });
   }

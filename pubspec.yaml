@@ -19,9 +19,9 @@ dependencies:
   media_kit_libs_video: 1.0.7
   media_kit_video: 2.0.1
   # @immutable
-  meta: 1.17.0
+  meta: 1.19.0
   # UI components
-  shadcn_ui: 0.54.0
+  shadcn_ui: 0.56.1
   # For NativeVideoPlayer
   video_player: 2.11.1
   # For gallery video player visibility tracking
@@ -32,4 +32,4 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  very_good_analysis: 10.2.0
+  very_good_analysis: 10.3.0

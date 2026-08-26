@@ -224,12 +224,10 @@ class GalleryMobileState extends State<GalleryMobile> {
 
   void handleThumbnailTap(int index) {
     if (autoScrollEnabled) disableAutoScrollOnInteraction();
-    unawaited(
-      pageController.animateToPage(
-        index,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      ),
+    pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
     );
   }
 
@@ -258,20 +256,16 @@ class GalleryMobileState extends State<GalleryMobile> {
 
     final nextPage = currentPage + 1;
     if (nextPage < widget.items.length) {
-      unawaited(
-        pageController.animateToPage(
-          nextPage,
-          duration: widget.autoScrollDuration,
-          curve: Curves.easeInOut,
-        ),
+      pageController.animateToPage(
+        nextPage,
+        duration: widget.autoScrollDuration,
+        curve: Curves.easeInOut,
       );
     } else {
-      unawaited(
-        pageController.animateToPage(
-          0,
-          duration: widget.autoScrollDuration,
-          curve: Curves.easeInOut,
-        ),
+      pageController.animateToPage(
+        0,
+        duration: widget.autoScrollDuration,
+        curve: Curves.easeInOut,
       );
     }
   }
