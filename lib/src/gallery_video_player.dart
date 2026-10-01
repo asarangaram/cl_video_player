@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import 'utils/http_headers.dart';
 import 'video_player_interface.dart';
 
 typedef OnPlayStateChanged =
@@ -28,6 +29,7 @@ class GalleryVideoPlayer extends StatefulWidget {
     required this.posterUrl,
     super.key,
     this.autoLoadVideo = false,
+    this.httpHeaders = const {},
   });
 
   final String videoUrl;
@@ -46,6 +48,10 @@ class GalleryVideoPlayer extends StatefulWidget {
   /// Where the still frame lives, or null for none — which shows the
   /// placeholder. Never derived from [videoUrl].
   final String? posterUrl;
+
+  /// Request headers sent with the poster image and the video (see
+  /// [VideoPlayerInterface.open] for web). Empty, none are sent.
+  final Map<String, String> httpHeaders;
 
   @override
   State<GalleryVideoPlayer> createState() => GalleryVideoPlayerState();
@@ -141,6 +147,7 @@ class GalleryVideoPlayerState extends State<GalleryVideoPlayer> {
     if (posterUrl == null) return buildPosterPlaceholder();
     return Image.network(
       posterUrl,
+      headers: imageRequestHeaders(widget.httpHeaders),
       fit: BoxFit.cover,
       width: double.infinity,
       height: double.infinity,
@@ -196,7 +203,7 @@ class GalleryVideoPlayerState extends State<GalleryVideoPlayer> {
     );
 
     try {
-      await player!.open(widget.videoUrl);
+      await player!.open(widget.videoUrl, httpHeaders: widget.httpHeaders);
 
       if (mounted) {
         setState(() => isInitialized = true);
@@ -226,6 +233,7 @@ class GalleryVideoPlayerState extends State<GalleryVideoPlayer> {
   }
 
   void handleVisibilityChanged(VisibilityInfo info) {
+    if (!mounted) return;
     final visible = info.visibleFraction > 0.5;
     if (visible != isVisible) {
       isVisible = visible;

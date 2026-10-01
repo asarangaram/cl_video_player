@@ -16,6 +16,7 @@ class PopOverVideoPlayer extends StatelessWidget {
     this.playerFactory,
     this.size = 20.0,
     this.isMobile,
+    this.httpHeaders = const {},
   });
 
   /// The video URL to play in the popup. If null, button is disabled.
@@ -31,6 +32,10 @@ class PopOverVideoPlayer extends StatelessWidget {
   /// to [PopOverVideoPlayerOverlay]; when null it falls back to the
   /// overlay's default breakpoint.
   final bool Function(BuildContext context)? isMobile;
+
+  /// Request headers sent with the video (see `VideoPlayerInterface.open`
+  /// for web). Empty, none are sent.
+  final Map<String, String> httpHeaders;
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +63,7 @@ class PopOverVideoPlayer extends StatelessWidget {
         playerFactory: playerFactory,
         onClose: () => entry.remove(),
         isMobile: isMobile,
+        httpHeaders: httpHeaders,
       ),
     );
 

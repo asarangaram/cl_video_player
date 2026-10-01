@@ -2,7 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-void showFullScreenImage(BuildContext context, String imageUrl) {
+import 'utils/http_headers.dart';
+
+void showFullScreenImage(
+  BuildContext context,
+  String imageUrl, {
+  Map<String, String> httpHeaders = const {},
+}) {
   final isNetworkImage =
       imageUrl.startsWith('http://') || imageUrl.startsWith('https://');
 
@@ -22,7 +28,11 @@ void showFullScreenImage(BuildContext context, String imageUrl) {
                     minScale: 0.5,
                     maxScale: 4,
                     child: isNetworkImage
-                        ? Image.network(imageUrl, fit: BoxFit.contain)
+                        ? Image.network(
+                            imageUrl,
+                            fit: BoxFit.contain,
+                            headers: imageRequestHeaders(httpHeaders),
+                          )
                         : Image.asset(imageUrl, fit: BoxFit.contain),
                   ),
                 ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'utils/http_headers.dart';
+
 /// Gallery card for PDF items.
 ///
 /// Displays the caller's preview image of the first page with a download button
@@ -11,6 +13,7 @@ class GalleryPdfCard extends StatelessWidget {
     required this.onDownload,
     required this.previewUrl,
     super.key,
+    this.httpHeaders = const {},
   });
 
   /// The original PDF URL.
@@ -22,6 +25,9 @@ class GalleryPdfCard extends StatelessWidget {
 
   /// Called when the download button is tapped.
   final VoidCallback onDownload;
+
+  /// Request headers sent with the preview image. Empty, none are sent.
+  final Map<String, String> httpHeaders;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +52,7 @@ class GalleryPdfCard extends StatelessWidget {
   Widget buildPreviewImage(String previewUrl) {
     return Image.network(
       previewUrl,
+      headers: imageRequestHeaders(httpHeaders),
       fit: BoxFit.cover,
       width: double.infinity,
       height: double.infinity,

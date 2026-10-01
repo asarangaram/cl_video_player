@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:web/web.dart' as web;
 
+import 'utils/object_url.dart';
 import 'video_player_interface.dart';
 
 /// Debug logging for video player
@@ -25,6 +26,9 @@ void _log(String message) {
 /// Bypasses Flutter's platform view positioning bugs.
 class OverlayVideoPlayer implements VideoPlayerInterface {
   web.HTMLVideoElement? _videoElement;
+
+  /// The object URL a headed video was downloaded to.
+  String? _objectUrl;
   web.HTMLDivElement? _containerElement;
   String? _containerId;
 
@@ -59,11 +63,21 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
   }
 
   @override
-  Future<void> open(String url, {bool autoPlay = true}) async {
+  Future<void> open(
+    String url, {
+    bool autoPlay = true,
+    Map<String, String> httpHeaders = const {},
+  }) async {
     _log('open() called with url: $url');
     dispose();
 
     try {
+      // A <video> element cannot send headers: download with them and
+      // play the local copy.
+      final src = httpHeaders.isEmpty
+          ? url
+          : _objectUrl = await fetchAsObjectUrl(url, httpHeaders);
+
       _containerId = 'overlay-video-${_instanceCounter++}';
 
       // Create container div with fixed position
@@ -94,7 +108,7 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
         ..setAttribute('crossorigin', 'anonymous') // Required for CORS
         ..muted =
             true // Muted for autoplay compliance on Safari
-        ..src = url;
+        ..src = src;
 
       _containerElement!.appendChild(_videoElement!);
 
@@ -394,6 +408,12 @@ class OverlayVideoPlayer implements VideoPlayerInterface {
 
     _videoElement = null;
     _containerElement = null;
+
+    final objectUrl = _objectUrl;
+    if (objectUrl != null) {
+      _objectUrl = null;
+      revokeObjectUrl(objectUrl);
+    }
     _isInitialized = false;
     _hasError = false;
     _lastPlayingState = false;

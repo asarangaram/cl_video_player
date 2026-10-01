@@ -8,6 +8,8 @@ import 'gallery_item.dart';
 import 'gallery_pdf_card.dart';
 import 'gallery_thumbnail_strip.dart';
 import 'gallery_video_player.dart';
+import 'utils/http_headers.dart';
+import 'video_player_interface.dart';
 
 class GalleryMobile extends StatefulWidget {
   const GalleryMobile({
@@ -15,6 +17,7 @@ class GalleryMobile extends StatefulWidget {
     required this.playerFactory,
     super.key,
     this.onPdfDownload,
+    this.httpHeaders = const {},
     this.height = 250.0,
     this.imageSpacing = 16.0,
     this.viewportFraction = 0.70,
@@ -28,6 +31,13 @@ class GalleryMobile extends StatefulWidget {
 
   /// Called when a PDF item's download button is tapped. Receives the PDF URL.
   final ValueChanged<String>? onPdfDownload;
+
+  /// Request headers sent with every network load the gallery makes: the
+  /// images, previews and posters, and the video (see
+  /// [VideoPlayerInterface.open] for how web players send them). Use it for
+  /// media served only to signed-in users, e.g.
+  /// `{'Authorization': 'Bearer <token>'}`. Empty, no headers are sent.
+  final Map<String, String> httpHeaders;
 
   final double height;
   final double imageSpacing;
@@ -98,6 +108,7 @@ class GalleryMobileState extends State<GalleryMobile> {
           items: widget.items,
           selectedIndex: currentPage,
           onThumbnailTap: handleThumbnailTap,
+          httpHeaders: widget.httpHeaders,
         ),
       ],
     );
@@ -112,6 +123,7 @@ class GalleryMobileState extends State<GalleryMobile> {
         pdfUrl: item.url,
         previewUrl: item.previewUrl,
         onDownload: () => widget.onPdfDownload?.call(item.url),
+        httpHeaders: widget.httpHeaders,
       );
     } else if (item.isVideo) {
       content = GalleryVideoPlayer(
@@ -121,6 +133,7 @@ class GalleryMobileState extends State<GalleryMobile> {
         isActiveVideo: activeVideoId == item.id,
         onPlayStateChanged: handleVideoPlayStateChanged,
         playerFactory: widget.playerFactory,
+        httpHeaders: widget.httpHeaders,
         autoLoadVideo: isCenter,
       );
     } else {
@@ -141,6 +154,7 @@ class GalleryMobileState extends State<GalleryMobile> {
     if (isNetworkImage) {
       image = Image.network(
         imageUrl,
+        headers: imageRequestHeaders(widget.httpHeaders),
         fit: BoxFit.contain,
         width: double.infinity,
         height: double.infinity,
@@ -158,7 +172,11 @@ class GalleryMobileState extends State<GalleryMobile> {
     }
 
     return GestureDetector(
-      onTap: () => showFullScreenImage(context, imageUrl),
+      onTap: () => showFullScreenImage(
+        context,
+        imageUrl,
+        httpHeaders: widget.httpHeaders,
+      ),
       child: image,
     );
   }

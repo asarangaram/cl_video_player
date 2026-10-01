@@ -246,6 +246,9 @@ void main() {
       await tester.tap(find.byType(Image));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
+      // The full-screen image has no error placeholder, so the test HTTP
+      // client's 400 is reported; only the request matters here.
+      expect(tester.takeException(), isA<NetworkImageLoadException>());
 
       final dialogImages = networkImages(
         tester,
@@ -435,6 +438,8 @@ void main() {
       expect(platform.dataSources.single.uri, _videoUrl);
       expect(platform.dataSources.single.httpHeaders, _headers);
       player.dispose();
+      // The controller disposes asynchronously; let it finish on the fake.
+      await pumpEventQueue();
     });
 
     test('passes no headers when none are given', () async {
@@ -444,6 +449,8 @@ void main() {
 
       expect(platform.dataSources.single.httpHeaders, isEmpty);
       player.dispose();
+      // The controller disposes asynchronously; let it finish on the fake.
+      await pumpEventQueue();
     });
   });
 }

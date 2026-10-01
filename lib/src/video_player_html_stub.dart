@@ -17,7 +17,11 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
   }
 
   @override
-  Future<void> open(String url, {bool autoPlay = true}) async {
+  Future<void> open(
+    String url, {
+    bool autoPlay = true,
+    Map<String, String> httpHeaders = const {},
+  }) async {
     throw UnsupportedError('HtmlVideoPlayer is only available on web.');
   }
 

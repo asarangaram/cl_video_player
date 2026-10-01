@@ -23,6 +23,7 @@ class PopOverVideoPlayerOverlay extends StatefulWidget {
     super.key,
     this.playerFactory,
     this.isMobile,
+    this.httpHeaders = const {},
   });
 
   /// Width at or below which the overlay falls back to its mobile layout
@@ -38,6 +39,9 @@ class PopOverVideoPlayerOverlay extends StatefulWidget {
   /// The host injects its workspace breakpoint here; when null the overlay
   /// falls back to [defaultMobileBreakpoint].
   final bool Function(BuildContext context)? isMobile;
+
+  /// Request headers sent with the video. Empty, none are sent.
+  final Map<String, String> httpHeaders;
 
   @override
   State<PopOverVideoPlayerOverlay> createState() =>
@@ -88,7 +92,7 @@ class PopOverVideoPlayerOverlayState extends State<PopOverVideoPlayerOverlay> {
         },
       );
 
-      await player!.open(widget.videoUrl);
+      await player!.open(widget.videoUrl, httpHeaders: widget.httpHeaders);
 
       if (mounted) {
         setState(() => isInitialized = true);

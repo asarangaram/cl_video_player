@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:web/web.dart' as web;
 
+import 'utils/object_url.dart';
 import 'video_player_interface.dart';
 
 /// Debug logging for video player
@@ -29,6 +30,9 @@ void _log(String message) {
 /// Web-only implementation.
 class HtmlVideoPlayer implements VideoPlayerInterface {
   web.HTMLVideoElement? _videoElement;
+
+  /// The object URL a headed video was downloaded to.
+  String? _objectUrl;
   String? _viewType;
   bool _isInitialized = false;
   bool _hasError = false;
@@ -57,11 +61,21 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
   }
 
   @override
-  Future<void> open(String url, {bool autoPlay = true}) async {
+  Future<void> open(
+    String url, {
+    bool autoPlay = true,
+    Map<String, String> httpHeaders = const {},
+  }) async {
     _log('open() called with url: $url, autoPlay: $autoPlay');
     dispose();
 
     try {
+      // A <video> element cannot send headers: download with them and
+      // play the local copy.
+      final src = httpHeaders.isEmpty
+          ? url
+          : _objectUrl = await fetchAsObjectUrl(url, httpHeaders);
+
       // Create unique view type for this instance
       _viewType = 'html-video-player-${_instanceCounter++}';
       _log('Created viewType: $_viewType');
@@ -77,7 +91,7 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
         ..setAttribute('webkit-playsinline', 'true')
         ..setAttribute('x-webkit-airplay', 'allow')
         ..setAttribute('autoplay', autoPlay ? 'true' : 'false')
-        ..src = url;
+        ..src = src;
 
       _log('Video element created, src set');
 
@@ -493,6 +507,12 @@ class HtmlVideoPlayer implements VideoPlayerInterface {
     _videoElement?.src = '';
     _videoElement = null;
     _viewType = null;
+
+    final objectUrl = _objectUrl;
+    if (objectUrl != null) {
+      _objectUrl = null;
+      revokeObjectUrl(objectUrl);
+    }
 
     _isInitialized = false;
     _hasError = false;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'gallery_item.dart';
+import 'utils/http_headers.dart';
 
 class GalleryThumbnailStrip extends StatelessWidget {
   const GalleryThumbnailStrip({
@@ -11,6 +12,7 @@ class GalleryThumbnailStrip extends StatelessWidget {
     this.thumbnailHeight = 50.0,
     this.thumbnailWidth = 70.0,
     this.spacing = 8.0,
+    this.httpHeaders = const {},
   });
 
   final List<GalleryItem> items;
@@ -19,6 +21,9 @@ class GalleryThumbnailStrip extends StatelessWidget {
   final double thumbnailHeight;
   final double thumbnailWidth;
   final double spacing;
+
+  /// Request headers sent with the thumbnail images. Empty, none are sent.
+  final Map<String, String> httpHeaders;
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +74,7 @@ class GalleryThumbnailStrip extends StatelessWidget {
                 else
                   Image.network(
                     imageUrl,
+                    headers: imageRequestHeaders(httpHeaders),
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stack) {
                       return Container(
