@@ -43,8 +43,11 @@ await player.initialize(
   onError: (error) => print('Error: $error'),
 );
 
-// Load and play video
-await player.open('https://example.com/video.mp4');
+// Load and play video (httpHeaders is optional)
+await player.open(
+  'https://example.com/video.mp4',
+  httpHeaders: {'Authorization': 'Bearer $token'},
+);
 
 // Control playback
 await player.play();
@@ -61,6 +64,40 @@ Widget videoWidget = player.buildVideoWidget(
 // Dispose when done
 player.dispose();
 ```
+
+### Private media (request headers)
+
+Media served only to signed-in users needs request headers, such as
+`Authorization: Bearer <token>`. Every gallery entry point takes an optional
+`httpHeaders` map (default `const {}`):
+
+```dart
+GalleryDesktop(
+  items: items,
+  playerFactory: NativeVideoPlayer.new,
+  httpHeaders: {'Authorization': 'Bearer $token'},
+)
+```
+
+`GalleryDesktop`, `GalleryMobile`, `GalleryThumbnailStrip`, `GalleryPdfCard`,
+`GalleryVideoPlayer`, `HighlightMedia`, `HighlightImage` and
+`PopOverVideoPlayer` accept it. It is sent with every network image (slides,
+thumbnails, the full-screen image, PDF previews, video posters, highlight
+images) and passed to the player as `open(url, httpHeaders: ...)`:
+
+- `NativeVideoPlayer` hands it to `VideoPlayerController.networkUrl`, and
+  `MediaKitVideoPlayer` to `Media`, so native platforms stream as usual.
+- **On web**, an HTML `<video>` element cannot send headers. When headers are
+  given, the web players (`NativeVideoPlayer`, `MediaKitVideoPlayer`,
+  `HtmlVideoPlayer`, `OverlayVideoPlayer`) download the whole file with them
+  and play it from an object (`blob:`) URL, released on the next `open` or on
+  `dispose`. Playback therefore starts only once the download finishes, and
+  the file is held in memory, so this suits short progressive files (MP4,
+  WebM). The server must allow the headers cross-origin (CORS). HLS playlists
+  with headers play on web only through `MediaKitVideoPlayer`, which sends
+  them with each request.
+
+Without headers, nothing changes: images and videos load exactly as before.
 
 ### Platform Considerations
 
