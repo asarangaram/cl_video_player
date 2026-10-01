@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
+import '../utils/http_headers.dart';
+
 import 'highlight_image_io.dart'
     if (dart.library.html) 'highlight_image_web.dart'
     as platform;
@@ -17,11 +19,15 @@ class HighlightImage extends StatelessWidget {
     required this.fit,
     super.key,
     this.onTap,
+    this.httpHeaders = const {},
   });
 
   final String uri;
   final BoxFit fit;
   final VoidCallback? onTap;
+
+  /// Request headers sent with a network image. Empty, none are sent.
+  final Map<String, String> httpHeaders;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +49,7 @@ class HighlightImage extends StatelessWidget {
     if (isNetwork) {
       return Image.network(
         uri,
+        headers: imageRequestHeaders(httpHeaders),
         fit: fit,
         width: double.infinity,
         height: double.infinity,

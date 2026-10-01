@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
+import 'utils/object_url.dart';
 import 'video_player_interface.dart';
 
 /// media_kit implementation of [VideoPlayerInterface].
@@ -18,6 +20,9 @@ import 'video_player_interface.dart';
 class MediaKitVideoPlayer implements VideoPlayerInterface {
   Player? _player;
   VideoController? _controller;
+
+  /// On web, the object URL a headed video was downloaded to.
+  String? _objectUrl;
 
   bool _isInitialized = false;
   bool _hasError = false;
@@ -65,9 +70,27 @@ class MediaKitVideoPlayer implements VideoPlayerInterface {
   }
 
   @override
-  Future<void> open(String url, {bool autoPlay = true}) async {
+  Future<void> open(
+    String url, {
+    bool autoPlay = true,
+    Map<String, String> httpHeaders = const {},
+  }) async {
+    _releaseObjectUrl();
     try {
-      final media = Media(url);
+      final Media media;
+      if (kIsWeb && httpHeaders.isNotEmpty && !_isHls(url)) {
+        // On web, media_kit sends headers only for HLS; a plain file plays
+        // through an HTML <video>, which cannot send them. Download with
+        // them and play the local copy.
+        final objectUrl = await fetchAsObjectUrl(url, httpHeaders);
+        _objectUrl = objectUrl;
+        media = Media(objectUrl);
+      } else {
+        media = Media(
+          url,
+          httpHeaders: httpHeaders.isEmpty ? null : httpHeaders,
+        );
+      }
       await _player!.open(media, play: autoPlay);
       _isInitialized = true;
       _hasError = false;
@@ -140,5 +163,16 @@ class MediaKitVideoPlayer implements VideoPlayerInterface {
     unawaited(_player?.dispose());
     _player = null;
     _controller = null;
+    _releaseObjectUrl();
+  }
+
+  static bool _isHls(String url) =>
+      Uri.tryParse(url)?.path.toLowerCase().endsWith('.m3u8') ?? false;
+
+  void _releaseObjectUrl() {
+    final objectUrl = _objectUrl;
+    if (objectUrl == null) return;
+    _objectUrl = null;
+    revokeObjectUrl(objectUrl);
   }
 }

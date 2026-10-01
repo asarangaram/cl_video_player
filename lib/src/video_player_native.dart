@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
+import 'utils/object_url.dart';
 import 'video_player_interface.dart';
 
 /// video_player package implementation of [VideoPlayerInterface].
@@ -16,6 +18,9 @@ import 'video_player_interface.dart';
 class NativeVideoPlayer implements VideoPlayerInterface {
   NativeVideoPlayer({this.applySafariFirstFrameFix = false});
   VideoPlayerController? _controller;
+
+  /// On web, the object URL a headed video was downloaded to.
+  String? _objectUrl;
 
   bool _hasError = false;
   PlayingStateCallback? _onPlayingChanged;
@@ -44,12 +49,29 @@ class NativeVideoPlayer implements VideoPlayerInterface {
   }
 
   @override
-  Future<void> open(String url, {bool autoPlay = true}) async {
+  Future<void> open(
+    String url, {
+    bool autoPlay = true,
+    Map<String, String> httpHeaders = const {},
+  }) async {
     await _controller?.dispose();
+    _releaseObjectUrl();
 
     try {
-      final compatibleUrl = _getCompatibleUrl(url);
-      _controller = VideoPlayerController.networkUrl(Uri.parse(compatibleUrl));
+      if (kIsWeb && httpHeaders.isNotEmpty) {
+        // The web plugin plays through an HTML <video>, which cannot send
+        // headers: download with them and play the local copy.
+        final objectUrl = await fetchAsObjectUrl(url, httpHeaders);
+        _objectUrl = objectUrl;
+        _controller = VideoPlayerController.networkUrl(
+          Uri.parse(_getCompatibleUrl(objectUrl)),
+        );
+      } else {
+        _controller = VideoPlayerController.networkUrl(
+          Uri.parse(_getCompatibleUrl(url)),
+          httpHeaders: httpHeaders,
+        );
+      }
 
       _controller!.addListener(_onControllerUpdate);
 
@@ -178,5 +200,13 @@ class NativeVideoPlayer implements VideoPlayerInterface {
     _controller?.removeListener(_onControllerUpdate);
     unawaited(_controller?.dispose());
     _controller = null;
+    _releaseObjectUrl();
+  }
+
+  void _releaseObjectUrl() {
+    final objectUrl = _objectUrl;
+    if (objectUrl == null) return;
+    _objectUrl = null;
+    revokeObjectUrl(objectUrl);
   }
 }

@@ -32,7 +32,21 @@ abstract interface class VideoPlayerInterface {
   ///
   /// [url] can be a network URL or asset path.
   /// [autoPlay] if true, starts playing immediately after loading.
-  Future<void> open(String url, {bool autoPlay = true});
+  /// [httpHeaders] are sent with the request for [url] (for example
+  /// `Authorization`). Empty, the request carries no extra headers.
+  ///
+  /// On web, an HTML `<video>` element cannot send headers. When
+  /// [httpHeaders] is non-empty, a web player downloads the whole file with
+  /// them and plays it from an object (`blob:`) URL, so playback starts only
+  /// once the download finishes, and the file is held in memory. This suits
+  /// progressive files (MP4, WebM), not streams; on web, only
+  /// `MediaKitVideoPlayer` plays an HLS playlist with headers, sending them
+  /// with each request.
+  Future<void> open(
+    String url, {
+    bool autoPlay = true,
+    Map<String, String> httpHeaders = const {},
+  });
 
   /// Start or resume playback.
   Future<void> play();

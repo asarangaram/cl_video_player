@@ -32,6 +32,7 @@ class HighlightMedia extends ConsumerStatefulWidget {
     super.key,
     this.playerFactory,
     this.fit = BoxFit.cover,
+    this.httpHeaders = const {},
   });
 
   /// The media URL — either a video URL or an image URL.
@@ -43,6 +44,10 @@ class HighlightMedia extends ConsumerStatefulWidget {
 
   /// How to fit the media in its container.
   final BoxFit fit;
+
+  /// Request headers sent with the image or video (see
+  /// [VideoPlayerInterface.open] for web). Empty, none are sent.
+  final Map<String, String> httpHeaders;
 
   @override
   ConsumerState<HighlightMedia> createState() => HighlightMediaState();
@@ -104,7 +109,11 @@ class HighlightMediaState extends ConsumerState<HighlightMedia> {
       final control = ref.read(mediaControlProvider);
       await player!.setVolume(control.isMuted ? 0.0 : 1.0);
 
-      await player!.open(widget.url, autoPlay: !control.isPaused && isVisible);
+      await player!.open(
+        widget.url,
+        autoPlay: !control.isPaused && isVisible,
+        httpHeaders: widget.httpHeaders,
+      );
 
       if (mounted) {
         setState(() => isVideoInitialized = true);
@@ -167,7 +176,11 @@ class HighlightMediaState extends ConsumerState<HighlightMedia> {
     if (!isVideo) {
       // Static images (jpg, png, etc.) — no pause/play, no overlay
       if (!isAnimatedWebp) {
-        return HighlightImage(uri: widget.url, fit: widget.fit);
+        return HighlightImage(
+          uri: widget.url,
+          fit: widget.fit,
+          httpHeaders: widget.httpHeaders,
+        );
       }
 
       // Animated webp — supports pause/play with TickerMode
@@ -176,7 +189,11 @@ class HighlightMediaState extends ConsumerState<HighlightMedia> {
         onTap: togglePlaybackPaused,
         child: TickerMode(
           enabled: !mediaControl.isPaused,
-          child: HighlightImage(uri: widget.url, fit: widget.fit),
+          child: HighlightImage(
+            uri: widget.url,
+            fit: widget.fit,
+            httpHeaders: widget.httpHeaders,
+          ),
         ),
       );
     }
